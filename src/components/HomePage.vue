@@ -26,17 +26,18 @@
 
         <p v-if="error" class="error-message">⚠️ {{ error }}</p>
     </div>
-    <div class="imagesection">
-        <img src="../assets/images/bg.png" alt="">
-        <div class="content">
-            <h1>عنوان</h1>
-            <p>هذا نص يظهر فوق الصورة.</p>
-        </div>
+     <div class="bgdiv">
+      <div>
+        <p>وَأَدْخِلْنَا فِى رَحْمَتِكَ ۖ وَأَنتَ أَرْحَمُ ٱلرَّٰحِمِينَ</p>
+      </div>
     </div>
+
+    <All/>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+import All from './all.vue';
 
 const location = ref({ latitude: null, longitude: null, city: '', country: '' });
 const error = ref(null);
@@ -188,6 +189,28 @@ watch(prayerTimes, (newPrayerTimes) => {
 </script>
 
 <style scoped>
+
+
+.bgdiv {
+  display: flex;
+  color: var(--white-color);
+  height: 150px;
+  background-image: linear-gradient(#d0a8718e, #fbd1821e),
+    url("../assets/images/bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+
+/* إضافة Shadow */
+box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  p {
+    font-weight: 500;
+    font-size: 1.25em;
+  }
+}
 .prayer-times-wrapper {
     max-width: 600px;
     margin: 0 auto;
