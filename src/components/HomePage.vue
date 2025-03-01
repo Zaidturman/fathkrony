@@ -1,75 +1,56 @@
 <template>
-
-    <div class="location-header">
-        <div class="date-info">
-            <p>{{ gregorianDate }}</p>
-            <p>{{ hijriDate }}</p>
+    <div class="prayer-times-wrapper">
+        <div class="location-header">
+            <div class="date-info">
+                <p>{{ gregorianDate }}</p>
+                <p>{{ hijriDate }}</p>
+            </div>
+            <div class="location-info">
+                <p class="location-title">المكان</p>
+                <p class="location-name">
+                    <span v-if="location.city && location.country">
+                        {{ location.city }}<br />
+                    </span>
+                    <span v-else>جاري تحديد الموقع...</span>
+                </p>
+            </div>
         </div>
-        <div class="location-info">
-            <p class="location-title">المكان</p>
-            <p class="location-name">
-            <p v-if="location.city && location.country">
-                {{ location.city }}<br />
-            </p>
-            <p v-else>جاري تحديد الموقع...</p>
 
-            </p>
+        <div class="prayer-times-container">
+            <div v-for="(time, name) in filteredPrayerTimes" :key="name"
+                :class="['prayer-time', { 'next-prayer': isNextPrayer(name) }]">
+                <div class="prayer-name">{{ getPrayerName(name) }}</div>
+                <div class="prayer-time-value">{{ time }}</div>
+            </div>
+        </div>
+
+        <p v-if="error" class="error-message">⚠️ {{ error }}</p>
+    </div>
+    <div class="imagesection">
+        <img src="../assets/images/bg.png" alt="">
+        <div class="content">
+            <h1>عنوان</h1>
+            <p>هذا نص يظهر فوق الصورة.</p>
         </div>
     </div>
-    <div class="prayer-times-container">
-        <div v-for="(time, key) in prayerTimes" :key="key" class="prayer-time"
-            :class="{ 'next-prayer': key === nextPrayer }">
-            <div class="prayer-name">{{ getPrayerName(key) }}</div>
-            <div class="prayer-time-value">{{ time }}</div>
-        </div>
-    </div>
-
-    <p v-if="error" style="color:red;">⚠️ {{ error }}</p>
-
 </template>
-<script setup>
 
-import { ref, onMounted } from 'vue';
+<script setup>
+import { ref, onMounted, computed, watch } from 'vue';
 
 const location = ref({ latitude: null, longitude: null, city: '', country: '' });
 const error = ref(null);
+const gregorianDate = ref('');
+const hijriDate = ref('');
+const prayerTimes = ref(null);
+const nextPrayer = ref(null); // سيتم تحديثه تلقائيًا
 
-import { computed } from 'vue';
-
-const prayerOrder = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-
-const nextPrayer = computed(() => {
-    const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
-
-    for (const prayer of prayerOrder) {
-        const [hours, minutes] = prayerTimes.value[prayer].split(':').map(Number);
-        const prayerTimeInMinutes = hours * 60 + minutes;
-
-        if (prayerTimeInMinutes > currentTime) {
-            return prayer;
-        }
-    }
-
-    // لو عدت كل الصلوات، نرجع للفجر تاني يوم
-    return 'Fajr';
-});
-function getPrayerName(key) {
-    const names = {
-        Fajr: 'الفجر',
-        Sunrise: 'الشروق',
-        Dhuhr: 'الظهر',
-        Asr: 'العصر',
-        Maghrib: 'المغرب',
-        Isha: 'العشاء',
-    };
-    return names[key] || key;
-}
 onMounted(() => {
-    getLocation(); // تشغيل مباشرة عند فتح الموقع
+    getLocation();
+    getCurrentDate();
 });
 
-function getLocation() {
+async function getLocation() {
     if (!navigator.geolocation) {
         error.value = "المتصفح لا يدعم تحديد الموقع الجغرافي.";
         return;
@@ -81,10 +62,8 @@ function getLocation() {
             location.value.latitude = latitude;
             location.value.longitude = longitude;
 
-            // استدعاء Reverse Geocoding للحصول على اسم المدينة والدولة
             await getCityAndCountry(latitude, longitude);
             await getPrayerTimes(latitude, longitude);
-
         },
         (err) => {
             error.value = "تعذر الحصول على الموقع: " + err.message;
@@ -106,34 +85,19 @@ async function getCityAndCountry(lat, lon) {
     }
 }
 
-const gregorianDate = ref('');
-const hijriDate = ref('');
-
-onMounted(() => {
-    getCurrentDate();
-});
-
 function getCurrentDate() {
     const now = new Date();
-
-    // التاريخ الميلادي
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     gregorianDate.value = now.toLocaleDateString('ar-EG', options);
-
-    // استدعاء التاريخ الهجري
     fetchHijriDate(now);
 }
 
 async function fetchHijriDate(date) {
-    const isoDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+    const isoDate = date.toISOString().split('T')[0];
     const url = `https://api.aladhan.com/v1/gToH?date=${isoDate}`;
 
     try {
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
-        }
-
         const data = await response.json();
         const hijri = data.data.hijri;
         hijriDate.value = `${hijri.weekday.ar} ${hijri.day} ${hijri.month.ar} ${hijri.year}`;
@@ -142,8 +106,6 @@ async function fetchHijriDate(date) {
         hijriDate.value = 'تعذر جلب التاريخ الهجري';
     }
 }
-const prayerTimes = ref(null);
-
 
 async function getPrayerTimes(latitude, longitude) {
     const url = `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=1`;
@@ -160,65 +122,91 @@ async function getPrayerTimes(latitude, longitude) {
     }
 }
 
-/* 
-import { ref } from 'vue';
+// تصفية أوقات الصلاة لعرض الفجر، الظهر، العصر، المغرب، والعشاء فقط
+const filteredPrayerTimes = computed(() => {
+    if (!prayerTimes.value) return {};
+    const { Fajr, Dhuhr, Asr, Maghrib, Isha } = prayerTimes.value;
+    return { Fajr, Dhuhr, Asr, Maghrib, Isha };
+});
 
-const location = ref({ latitude: null, longitude: null, city: '', country: '' });
-const error = ref(null);
-
-async function getLocation() {
-    if (!navigator.geolocation) {
-        error.value = "Geolocation is not supported by your browser.";
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        async (position) => {
-            const { latitude, longitude } = position.coords;
-            location.value.latitude = latitude;
-            location.value.longitude = longitude;
-
-            // Call reverse geocoding API
-            await getCityAndCountry(latitude, longitude);
-        },
-        (err) => {
-            error.value = "Unable to retrieve location. Error: " + err.message;
-        }
-    );
+function getPrayerName(prayerKey) {
+    const names = {
+        Fajr: 'الفجر',
+        Dhuhr: 'الظهر',
+        Asr: 'العصر',
+        Maghrib: 'المغرب',
+        Isha: 'العشاء'
+    };
+    return names[prayerKey];
 }
 
-async function getCityAndCountry(lat, lon) {
-    const apiKey = '5c043ac684874734ae5451592b91884a';  // Replace with your OpenCage API Key
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}&language=ar`;
+function isNextPrayer(prayerKey) {
+    return nextPrayer.value === prayerKey;
+}
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data.results.length > 0) {
-            const result = data.results[0].components;
-            location.value.city = result.city || result.town || result.village || "غير معروف";
-            location.value.country = result.country || "غير معروف";
-        } else {
-            error.value = "لم يتم العثور على موقع جغرافي.";
-        }
-    } catch (err) {
-        error.value = "حدث خطأ أثناء جلب البيانات: " + err.message;
+// دالة لتحديد الصلاة التالية
+function getNextPrayer(prayerTimes) {
+    const now = new Date(); // الوقت الحالي
+
+    // تحويل أوقات الصلاة إلى كائنات Date
+    const prayerTimesWithDates = Object.entries(prayerTimes).map(([name, time]) => {
+        const [hours, minutes] = time.split(':');
+        const date = new Date();
+        date.setHours(hours, minutes, 0, 0); // تعيين الساعة والدقيقة
+        return { name, time: date };
+    });
+
+    // تصفية الصلوات التي لم تحدث بعد
+    const upcomingPrayers = prayerTimesWithDates.filter((prayer) => prayer.time > now);
+
+    // إذا كانت هناك صلوات قادمة، نختار الأقرب
+    if (upcomingPrayers.length > 0) {
+        const next = upcomingPrayers.reduce((prev, curr) =>
+            prev.time < curr.time ? prev : curr
+        );
+        return next.name;
     }
-} */
+
+    // إذا لم تكن هناك صلوات قادمة، نعود إلى أول صلاة في اليوم التالي
+    return prayerTimesWithDates[0].name;
+}
+
+// دالة لتحديث الصلاة التالية كل دقيقة
+function startNextPrayerUpdate(prayerTimes) {
+    setInterval(() => {
+        nextPrayer.value = getNextPrayer(prayerTimes);
+    }, 60000); // تحديث كل دقيقة
+}
+
+// عند تغيير prayerTimes، نقوم بتحديث الصلاة التالية
+watch(prayerTimes, (newPrayerTimes) => {
+    if (newPrayerTimes) {
+        nextPrayer.value = getNextPrayer(newPrayerTimes);
+        startNextPrayerUpdate(newPrayerTimes);
+    }
+});
 </script>
+
 <style scoped>
+.prayer-times-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+    font-family: 'Cairo', sans-serif;
+    direction: rtl;
+}
+
 .location-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    direction: rtl;
-    font-family: 'Cairo', sans-serif;
+    margin-bottom: 20px;
 }
 
 .date-info {
     text-align: left;
-    font-size: 12px;
-    color: #000;
+    font-size: 14px;
+    color: #555;
 }
 
 .location-info {
@@ -227,53 +215,105 @@ async function getCityAndCountry(lat, lon) {
 
 .location-title {
     color: #D0A871;
-    font-size: 12px;
+    font-size: 14px;
+    margin-bottom: 4px;
 }
 
 .location-name {
     font-weight: bold;
-    font-size: 14px;
-    color: #000;
+    font-size: 16px;
+    color: #333;
 }
 
 .prayer-times-container {
     display: flex;
-    justify-content: space-between;
-    gap: 8px;
+    justify-content: flex-start;
+    /* تغيير إلى flex-start */
+    gap: 12px;
     background: #f7f7f7;
-    padding: 12px;
+    padding: 16px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
+    /* إضافة سكرول أفقي */
+    white-space: nowrap;
+    /* منع العناصر من الانتقال لسطر جديد */
 }
 
 .prayer-time {
-    flex: 1;
     text-align: center;
     padding: 8px;
     background: #fff;
     border-radius: 8px;
+    min-width: 80px;
+    /* عرض ثابت لكل عنصر */
+    flex: 0 0 auto;
+    /* منع العناصر من التمدد */
     transition: transform 0.3s ease, background-color 0.3s ease;
-    min-width: 70px;
 }
 
 .prayer-name {
     font-weight: bold;
     font-size: 14px;
     color: #8E8D8B;
+    margin-bottom: 8px;
 }
 
 .prayer-time-value {
     font-size: 16px;
     color: #000;
-    margin-top: 4px;
 }
 
 .next-prayer {
     background-color: #f5cd87;
     color: #000;
-    transform: scale(1.1);
+    transform: scale(1.05);
     font-weight: bold;
     box-shadow: 0 0 10px rgba(245, 205, 135, 0.5);
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    margin-top: 16px;
+}
+
+.imagesection {
+    width: 90%;
+    /* أقل من عرض الشاشة بقليل */
+    max-width: 800px;
+    /* أقصى عرض للصورة */
+    margin: 0 auto;
+    /* توسيط الصورة أفقياً */
+    border-radius: 8px;
+    /* زوايا مدورة */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* تأثير ظل خفيف */
+    overflow: hidden;
+    height: 200px;
+    /* لإخفاء الأجزاء الزائدة من الصورة */
+}
+
+.imagesection img {
+    width: 100%;
+    /* تغطية عرض العنصر بالكامل */
+    height: auto;
+    /* الحفاظ على نسبة الطول إلى العرض */
+    display: block;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    height: 200px;
+    /* لإزالة المسافة الإضافية أسفل الصورة */
+}
+
+.imagesection content {
+    position: relative;
+    z-index: 999;
+    /* لجعل النصوص تظهر فوق الصورة */
+    color: white;
+    /* لون النص */
+    text-align: center;
+    padding-top: 20%;
 }
 </style>
