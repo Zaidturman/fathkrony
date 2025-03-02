@@ -38,6 +38,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import All from './all.vue';
+import Quran from './quran.vue';
 
 const location = ref({ latitude: null, longitude: null, city: '', country: '' });
 const error = ref(null);

@@ -10,14 +10,19 @@
           :key="index"
           class="col-4 mb-4"
         >
+        <router-link
+          :to="worship.route"
+          class="text-decoration-none"
+        >
           <div class="card h-100 shadow-sm">
             <div class="card-body">
-                <div>
-                    <img :src="worship.icon" class="icon"  alt="">
-                </div>
+              <div>
+                <img :src="worship.icon" class="icon" alt="">
+              </div>
               <h5 class="card-title">{{ worship.title }}</h5>
             </div>
           </div>
+        </router-link>
         </div>
       </div>
     </div>
@@ -28,38 +33,27 @@
 
   // تعريف بيانات العبادات
   const worships = [
-    {
-      title: "اذكار الصلاة",
-      icon: "../assets/images/beads.png",
-    },
-    {
-      title: "اذكار الصباح",
-      icon: "../assest/images/beads.png",
-
-    },
-    {
-      title: "اذكار المساء",
-      icon: "../assest/images/beads.png",
-
-    },
+    
     {
       title: " التسبيح",
-      icon: "../assest/images/beads.png",
+      icon: '../assets/images/beads.png',
 
     },
     {
       title: "جميع الادعية",
-      icon: "../assest/images/beads.png",
+      icon: '../assets/images/beads.png',
 
     },
     {
-      title: "اذكار متنوعة",
-      icon: "../assest/images/beads.png",
+      title: "الاذكار ",
+      icon: '../assets/images/beads.png',
+      route: '/azkar'
 
     },
     {
       title: " المصحف",
-      icon: "../assest/images/beads.png",
+      icon: '../assets/images/beads.png',
+      route: '/quran'
 
     },
     
@@ -70,13 +64,16 @@
   /* يمكنك إضافة أنماط مخصصة هنا إذا كنت بحاجة */
   .card {
     transition: transform 0.3s ease;
-    font-size: 12px;
+}
+.card-title{
+      font-size: 12px;
+
   }
   .card:hover {
     transform: scale(1.05);
     background: #F5CD87;
   }
   .icon {
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 50px;
 }
   </style>
