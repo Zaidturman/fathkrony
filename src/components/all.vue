@@ -1,7 +1,7 @@
 <template>
-  <div class="container text-center mt-5">
+  <div class="container text-center mt-2">
     <!-- العنوان -->
-    <h1 class="mb-4 text-primary font-weight-bold">جميع العبادات</h1>
+    <h1 class="mb-4 title font-weight-bold">جميع العبادات</h1>
 
     <!-- الجدول (Grid) -->
     <div class="row">
@@ -100,7 +100,7 @@ const worships = [
 /* التأثيرات على العنوان */
 h1 {
   font-size: 30px;
-  color: #2b6cb0;
+  color: #D0A871;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   font-family: 'Cairo', sans-serif;
 }
