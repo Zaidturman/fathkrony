@@ -26,12 +26,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 // تعريف بيانات العبادات
 const worships = [
-  {
-    title: "التسبيح",
-    icon: '../assets/images/beads.png',
-    route: '/tasbeeh',
 
-  },
   {
     title: "جميع الأدعية",
     icon: '../assets/images/hands.png',
