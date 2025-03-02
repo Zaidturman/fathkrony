@@ -89,7 +89,7 @@ async function getCityAndCountry(lat, lon) {
 
 function getCurrentDate() {
     const now = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
     gregorianDate.value = now.toLocaleDateString('ar-EG', options);
     fetchHijriDate(now);
 }
@@ -190,7 +190,11 @@ watch(prayerTimes, (newPrayerTimes) => {
 </script>
 
 <style scoped>
-
+*{
+    font-family: "Cairo", serif;
+  font-weight: 400;
+  font-style: normal;
+}
 
 .bgdiv {
   display: flex;
