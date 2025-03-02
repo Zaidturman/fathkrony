@@ -4,7 +4,7 @@
     <div class="bottom-nav">
         <router-link to="/" class="nav-item">الرئيسية
         </router-link>
-        <router-link to="/times" class="nav-item">مواقيت الصلاة</router-link>
+        <router-link to="/times" class="nav-item">المسبحة</router-link>
         <router-link to="/setting" class="nav-item">الاعدادات</router-link>
     </div>
 </template>

@@ -26,13 +26,13 @@
 
         <p v-if="error" class="error-message">⚠️ {{ error }}</p>
     </div>
-     <div class="bgdiv">
-      <div>
-        <p>وَأَدْخِلْنَا فِى رَحْمَتِكَ ۖ وَأَنتَ أَرْحَمُ ٱلرَّٰحِمِينَ</p>
-      </div>
+    <div class="bgdiv">
+        <div>
+            <p>وَأَدْخِلْنَا فِى رَحْمَتِكَ ۖ وَأَنتَ أَرْحَمُ ٱلرَّٰحِمِينَ</p>
+        </div>
     </div>
 
-    <All/>
+    <All />
 </template>
 
 <script setup>
@@ -190,32 +190,34 @@ watch(prayerTimes, (newPrayerTimes) => {
 </script>
 
 <style scoped>
-*{
+* {
     font-family: "Cairo", serif;
-  font-weight: 400;
-  font-style: normal;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .bgdiv {
-  display: flex;
-  color: var(--white-color);
-  height: 150px;
-  background-image: linear-gradient(#d0a8718e, #fbd1821e),
-    url("../assets/images/bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  justify-content: center;
-  align-items: center;
-  border-radius: 15px;
+    display: flex;
+    color: var(--white-color);
+    height: 150px;
+    background-image:
+        url("../assets/images/bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
 
-/* إضافة Shadow */
-box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  p {
-    font-weight: 500;
-    font-size: 1.25em;
-  }
+    /* إضافة Shadow */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+
+    p {
+        font-weight: 500;
+        font-size: 1.25em;
+    }
 }
+
 .prayer-times-wrapper {
     max-width: 600px;
     margin: 0 auto;
