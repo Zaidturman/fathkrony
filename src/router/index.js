@@ -10,6 +10,7 @@ import Azkar from "@/components/Azkar.vue";
 import Watch from "@/components/Watch.vue";
 import Books from "@/components/Books.vue";
 import Hadeth from "@/components/Hadeth.vue";
+import AllQuran from "@/components/AllQuran.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,8 +30,8 @@ const router = createRouter({
       name: "setting",
       component: SettingPage,
     },
-    { path: "/surah/:id", component: SurahDetails },
-    { path: "/quran", component: Quran },
+    { path: "/surah/:id", name: "surah", component: SurahDetails },
+    { path: "/quran", name: "quran", component: Quran },
     { path: "/adhkar/:id", name: "AdhkarDetails", component: PrayerAzkar },
     { path: "/azkar", component: Azkar },
     { path: "/watch", component: Watch },

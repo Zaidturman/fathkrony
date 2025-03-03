@@ -26,23 +26,23 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 // تعريف بيانات العبادات
 const worships = [
-{
-        title: "المصحف",
-        icon: '../assets/images/koran.png',
-        route: '/quran',
-    },
-    {
-        title: "الأذكار",
-        icon: '../assets/images/bismillah.png',
-        route: '/azkar',
-    },
-    
-    {
-      title: "جميع الأدعية",
-      icon: '../assets/images/hands.png',
-      route: '/adia',
-  
-    },
+  {
+    title: "المصحف",
+    icon: '../assets/images/koran.png',
+    route: '/quran',
+  },
+  {
+    title: "الأذكار",
+    icon: '../assets/images/bismillah.png',
+    route: '/azkar',
+  },
+
+  {
+    title: "جميع الأدعية",
+    icon: '../assets/images/hands.png',
+    route: '/adia',
+
+  },
   {
     title: "فيديوهات دينية",
     icon: '../assets/images/beads.png',
@@ -62,12 +62,16 @@ const worships = [
 </script>
 
 <style scoped>
+* {
+  font-family: "Cairo";
+}
+
 /* تنسيق البطاقات */
 .card {
   border-radius: 10px;
   transition: transform 0.3s ease;
   background-color: #ffffff;
-  border: none 
+  border: none
 }
 
 .card-title {

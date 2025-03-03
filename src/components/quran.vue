@@ -1,83 +1,52 @@
 <template>
-    <div class="min-h-screen  p-6">
-      <div class="max-w-3xl mx-auto   p-6">
-        <h1 class="text-2xl font-bold text-center mb-4">📖 قائمة السور القرآنية</h1>
-  
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="ابحث عن سورة..."
-          class="w-full p-2 mb-4 border rounded"
-        />
-  
-        <ul class="p-0 ">
-          <li
-            v-for="surah in filteredSurahs"
-            :key="surah.number"
-            class="p-3 bg-gray-50 hover:bg-gray-200 cursor-pointer rounded border mb-2 oneitem flex justify-between items-center"
-            @click="openSurah(surah.number)"
-          >
-            <span class="font-semibold">({{ surah.number }}) </span>
-            <span class="text-gray-600">{{ surah.name }}</span>
-          </li>
-        </ul>
+  <section class="quran">
+    <h3><span style="font-size: 40px;">{</span> القرآن الكريم <span style="font-size: 40px;">}</span></h3>
+
+    <div class="container">
+      <div class="surahContainer">
+        <div v-for="(surah, index) in surahs" :key="index" class="surah" @click="goToSurah(surah.number)">
+          <p>{{ surah.name }}</p>
+          <p>{{ surah.englishName }}</p>
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  import { useRouter } from 'vue-router';
-  
-  export default {
-    data() {
-      return {
-        surahs: [],
-        searchQuery: '',
-      };
-    },
-    computed: {
-      filteredSurahs() {
-        return this.surahs.filter((surah) =>
-          surah.englishName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          surah.name.includes(this.searchQuery)
-        );
-      },
-    },
-    async created() {
-      const response = await axios.get('https://api.alquran.cloud/v1/surah');
-      this.surahs = response.data.data;
-    },
-    setup() {
-      const router = useRouter();
-  
-      function openSurah(surahNumber) {
-        router.push(`/surah/${surahNumber}`);
-      }
-  
-      return { openSurah };
-    },
-  };
-  </script>
-  <style scoped>
-*{
-    font-family: "Amiri Quran", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-ul {
- list-style: none;
-}
-.oneitem{
-  background: #fff;
-}
-input{
-  margin: 0 ;
-  width: 100%;
-  padding: 0;
-}
-h1{
-  font-family: 'Cairo';
-}
-</style>
-  
+  </section>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const surahs = ref([]);
+const searchQuery = ref(''); // قيمة البحث
+
+onMounted(async () => {
+  try {
+    console.log('Fetching surahs...');
+    const response = await fetch('https://api.alquran.cloud/v1/meta');
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Surahs data:', data);
+
+    if (data && data.data && data.data.surahs && data.data.surahs.references) {
+      surahs.value = data.data.surahs.references;
+    } else {
+      console.error('Unexpected API response format:', data);
+    }
+  } catch (error) {
+    console.error('Error fetching surahs:', error);
+  }
+});
+
+
+const goToSurah = (id) => {
+  router.push({ name: 'surah', params: { id } });
+};
+</script>
+
+<style></style>
