@@ -2,14 +2,53 @@
     <router-view></router-view>
 
     <div class="bottom-nav">
-        <router-link to="/" class="nav-item">الرئيسية
+        <router-link to="/" class="nav-item" active-class="active">
+            <div>
+                <img src="../assets/images/home.png" alt="" class="icon default-icon">
+                <img src="../assets/images/home1.png" alt="" class="icon active-icon">
+                <div>الرئيسية</div>
+            </div>
         </router-link>
-        <router-link to="/times" class="nav-item">المسبحة</router-link>
-        <router-link to="/setting" class="nav-item">الاعدادات</router-link>
+
+        <router-link to="/times" class="nav-item" active-class="active">
+            <div>
+                <img src="../assets/images/rosaryactive.png" alt="" class="icon default-icon">
+                <img src="../assets/images/rosary.png" alt="" class="icon active-icon">
+                <div>المسبحة</div>
+            </div>
+        </router-link>
+
+        <router-link to="/setting" class="nav-item" active-class="active">
+            <div>
+                <img src="../assets/images/settingactive.png" alt="" class="icon default-icon">
+                <img src="../assets/images/setting.png" alt="" class="icon active-icon">
+                <div>الإعدادات</div>
+            </div>
+        </router-link>
     </div>
 </template>
 
 <style scoped>
+.icon {
+    width: 24px;
+}
+
+.default-icon {
+    display: block;
+}
+
+.active-icon {
+    display: none;
+}
+
+.nav-item.active .default-icon {
+    display: none;
+}
+
+.nav-item.active .active-icon {
+    display: block;
+}
+
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -28,7 +67,14 @@
     font-size: 16px;
 }
 
-.nav-item.router-link-exact-active {
+.nav-item div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.nav-item.active {
     color: var(--color-gold-dark);
 }
 </style>

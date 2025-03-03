@@ -26,12 +26,12 @@
 
         <p v-if="error" class="error-message">⚠️ {{ error }}</p>
     </div>
+
     <div class="bgdiv">
         <div>
-            <p>وَأَدْخِلْنَا فِى رَحْمَتِكَ ۖ وَأَنتَ أَرْحَمُ ٱلرَّٰحِمِينَ</p>
+            <p>{{ currentZikr }}</p>
         </div>
     </div>
-
     <All />
 </template>
 
@@ -39,6 +39,21 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import All from './all.vue';
 import Quran from './quran.vue';
+
+import azkarData from "../assets/theker.json"; // تأكد من صحة المسار
+
+const azkar = azkarData.azkar;
+const currentZikr = ref("");
+
+const getRandomZikr = () => {
+    const randomIndex = Math.floor(Math.random() * azkar.length);
+    currentZikr.value = azkar[randomIndex];
+};
+
+onMounted(() => {
+    getRandomZikr(); // تحميل ذكر عند فتح الصفحة
+    setInterval(getRandomZikr, 3600000); // تحديث الذكر كل ساعة (3600000ms = 1 ساعة)
+});
 
 const location = ref({ latitude: null, longitude: null, city: '', country: '' });
 const error = ref(null);
@@ -199,7 +214,7 @@ watch(prayerTimes, (newPrayerTimes) => {
 .bgdiv {
     display: flex;
     color: var(--white-color);
-    height: 150px;
+    height: 100px;
     background-image:
         url("../assets/images/bg.png");
     background-size: cover;
@@ -260,10 +275,7 @@ watch(prayerTimes, (newPrayerTimes) => {
     justify-content: flex-start;
     /* تغيير إلى flex-start */
     gap: 12px;
-    background: #f7f7f7;
     padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
     /* إضافة سكرول أفقي */
     white-space: nowrap;
@@ -273,7 +285,7 @@ watch(prayerTimes, (newPrayerTimes) => {
 .prayer-time {
     text-align: center;
     padding: 8px;
-    background: #fff;
+    background: #f5f5f5;
     border-radius: 8px;
     min-width: 80px;
     /* عرض ثابت لكل عنصر */

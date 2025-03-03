@@ -1,13 +1,13 @@
 <template>
   <div class="container text-center mt-2">
     <!-- العنوان -->
-    <h1 class="mb-4 title font-weight-bold">جميع العبادات</h1>
+    <h1 class="mb-4 mt-4 title font-weight-bold">جميع العبادات</h1>
 
     <!-- الجدول (Grid) -->
     <div class="row">
       <div v-for="(worship, index) in worships" :key="index" class="col-4 mb-3">
         <router-link :to="worship.route" class="text-decoration-none">
-          <div class="card h-100 shadow-lg">
+          <div class="card h-100 shadow">
             <div class="card-body d-flex flex-column align-items-center">
               <!--  <div>
                 <img :src='worship.icon' class="icon mb-3" alt="">
