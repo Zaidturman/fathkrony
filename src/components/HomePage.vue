@@ -104,8 +104,8 @@ async function getCityAndCountry(lat, lon) {
 
 function getCurrentDate() {
     const now = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
-    gregorianDate.value = now.toLocaleDateString('ar-EG', options);
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    gregorianDate.value = now.toLocaleDateString('ar', options);
     fetchHijriDate(now);
 }
 
@@ -213,23 +213,21 @@ watch(prayerTimes, (newPrayerTimes) => {
 
 .bgdiv {
     display: flex;
-    color: var(--white-color);
-    height: 100px;
-    background-image:
-        url("../assets/images/bg.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    height: 70px;
+ 
     justify-content: center;
     align-items: center;
     border-radius: 15px;
+    margin: 0;
+    background: linear-gradient(to right, #ebc58f, #F5CD87);
+   
 
     /* إضافة Shadow */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 
     p {
         font-weight: 500;
         font-size: 1.25em;
+        color: #222222;
     }
 }
 
@@ -262,6 +260,7 @@ watch(prayerTimes, (newPrayerTimes) => {
     color: #D0A871;
     font-size: 14px;
     margin-bottom: 4px;
+    font-weight: bold;
 }
 
 .location-name {
@@ -285,7 +284,7 @@ watch(prayerTimes, (newPrayerTimes) => {
 .prayer-time {
     text-align: center;
     padding: 8px;
-    background: #f5f5f5;
+    background: #ffffff;
     border-radius: 8px;
     min-width: 80px;
     /* عرض ثابت لكل عنصر */
@@ -297,7 +296,7 @@ watch(prayerTimes, (newPrayerTimes) => {
 .prayer-name {
     font-weight: bold;
     font-size: 14px;
-    color: #8E8D8B;
+    color: #232323;
     margin-bottom: 8px;
 }
 

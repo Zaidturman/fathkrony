@@ -1,6 +1,6 @@
 <template>
-    <div class="min-h-screen bg-gray-100 p-6">
-      <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <div class="min-h-screen  p-6">
+      <div class="max-w-3xl mx-auto   p-6">
         <h1 class="text-2xl font-bold text-center mb-4">📖 قائمة السور القرآنية</h1>
   
         <input
@@ -10,11 +10,11 @@
           class="w-full p-2 mb-4 border rounded"
         />
   
-        <ul class="grid grid-cols-2 gap-3">
+        <ul class="p-0 ">
           <li
             v-for="surah in filteredSurahs"
             :key="surah.number"
-            class="p-3 bg-gray-50 hover:bg-gray-200 cursor-pointer rounded shadow flex justify-between items-center"
+            class="p-3 bg-gray-50 hover:bg-gray-200 cursor-pointer rounded border mb-2 oneitem flex justify-between items-center"
             @click="openSurah(surah.number)"
           >
             <span class="font-semibold">({{ surah.number }}) </span>
@@ -67,6 +67,17 @@
 }
 ul {
  list-style: none;
+}
+.oneitem{
+  background: #fff;
+}
+input{
+  margin: 0 ;
+  width: 100%;
+  padding: 0;
+}
+h1{
+  font-family: 'Cairo';
 }
 </style>
   

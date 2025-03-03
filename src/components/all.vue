@@ -1,13 +1,13 @@
 <template>
   <div class="container text-center mt-2">
     <!-- العنوان -->
-    <h1 class="mb-4 mt-4 title font-weight-bold">جميع العبادات</h1>
+    <h1 class="mb-4 mt-4 title font-weight-bold ">جميع العبادات</h1>
 
     <!-- الجدول (Grid) -->
     <div class="row">
-      <div v-for="(worship, index) in worships" :key="index" class="col-4 mb-3">
+      <div v-for="(worship, index) in worships" :key="index" class="col-6 mb-3">
         <router-link :to="worship.route" class="text-decoration-none">
-          <div class="card h-100 shadow">
+          <div class="card h-100 ">
             <div class="card-body d-flex flex-column align-items-center">
               <!--  <div>
                 <img :src='worship.icon' class="icon mb-3" alt="">
@@ -26,23 +26,23 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 // تعريف بيانات العبادات
 const worships = [
-
-  {
-    title: "جميع الأدعية",
-    icon: '../assets/images/hands.png',
-    route: '/adia',
-
-  },
-  {
-    title: "الأذكار",
-    icon: '../assets/images/bismillah.png',
-    route: '/azkar',
-  },
-  {
-    title: "المصحف",
-    icon: '../assets/images/koran.png',
-    route: '/quran',
-  },
+{
+        title: "المصحف",
+        icon: '../assets/images/koran.png',
+        route: '/quran',
+    },
+    {
+        title: "الأذكار",
+        icon: '../assets/images/bismillah.png',
+        route: '/azkar',
+    },
+    
+    {
+      title: "جميع الأدعية",
+      icon: '../assets/images/hands.png',
+      route: '/adia',
+  
+    },
   {
     title: "فيديوهات دينية",
     icon: '../assets/images/beads.png',
@@ -66,7 +66,8 @@ const worships = [
 .card {
   border-radius: 10px;
   transition: transform 0.3s ease;
-  background-color: #fafafa;
+  background-color: #ffffff;
+  border: none 
 }
 
 .card-title {
