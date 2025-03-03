@@ -10,11 +10,11 @@
           class="quran-swiper"
       >
           <swiper-slide v-for="(page, pageIndex) in paginatedAyahs" :key="pageIndex">
-              <div class="page-container">
-                  <span v-for="(ayah, index) in page" :key="ayah.number"  class="inline">
-                      {{ ayah.text }}
-                      <span class="ayah-number">({{ (pageIndex * ayatPerPage) + index + 1 }})</span>
-                  </span>
+              <div class="page-container inline" >
+                  <div v-for="(ayah, index) in page" :key="ayah.number"  class="inline">
+                      <span class="inline">{{ ayah.text }}</span>
+                      <span class="ayah-number inline">({{ (pageIndex * ayatPerPage) + index + 1 }})</span>
+                  </div>
               </div>
           </swiper-slide>
       </swiper>
@@ -87,13 +87,12 @@ export default {
 
 .inline-ayah {
   display: inline !important;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 2;
 }
 
 .ayah-number {
   font-size: 16px;
   color: gray;
-  margin-left: 4px;
 }
 </style>
