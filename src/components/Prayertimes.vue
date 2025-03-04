@@ -1,113 +1,145 @@
 <template>
-    <div class="container text-center mt-5">
-        <!-- العنوان -->
-        <h1 class="mb-4  font-weight-bold">المسبحة الإلكترونية</h1>
-
-        <!-- عرض الذكر الحالي -->
-        <div class="card p-4  mb-4">
-            <h3 class="">{{ currentDhikr }}</h3>
-        </div>
-
-        <!-- عرض العد -->
-        <div class="counter">
-            <h2 class="text-dark mb-3"> {{ count }}</h2>
-        </div>
-
-        <!-- زر الزيادة -->
-        <button @click="increaseCount" class="  btn-lg addbtn">
-            أضف تسبيحة
+    <div class="container">
+  
+      <!-- أزرار اختيار الذكر -->
+      <div class="zikr-buttons">
+        <button
+          v-for="(zikr, index) in azkar"
+          :key="index"
+          @click="setZikr(index)"
+          :class="{ active: index === currentZikrIndex }"
+        >
+          {{ zikr }}
         </button>
-
-        
+      </div>
+  
+      <!-- دائرة التسبيح -->
+      <div class="circle-wrapper">
+        <div class="circle" @click="handleClick">
+          <p class="zikr-text">{{ azkar[currentZikrIndex] }}</p>
+          <div class="progress" :style="progressStyle"></div>
+        </div>
+      </div>
     </div>
-</template>
-
-<script setup>
-import { ref } from 'vue';
-
-// قائمة الأذكار المتغيرة
-const dhikrs = [
-    'سبحان الله',
-    'الحمد لله',
-    'الله أكبر',
-    'لا إله إلا الله'
-];
-
-// حالة العد والذكر الحالي
-const count = ref(0);
-const currentDhikr = ref(dhikrs[0]);
-
-// زيادة العدد وعند الوصول لـ 33 يتم تغيير الذكر
-const increaseCount = () => {
-    count.value++;
-    if (count.value >= 33) {
-        count.value = 0;  // إعادة العد إلى 0 بعد 33 مرة
-        const randomIndex = Math.floor(Math.random() * dhikrs.length);  // تغيير الذكر عشوائيًا من القائمة
-        currentDhikr.value = dhikrs[randomIndex];
-    }
-};
-</script>
-
-<style scoped>
-/* تنسيق الصفحة */
-.container {
-height: 80vh;    
-}
-
-h1 {
-    font-size: 30px;
-    color: #242424;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* تنسيق الذكر */
-.card {
-    background-color: #D0A871;
-    border-radius: 10px;
-    color: white;
-}
-
-.counter h2 {
-    font-size: 24px;
-    color: #333;
-    
-}
-
-/* تنسيق الزر */
-button {
-    padding: 10px 20px;
-    font-size: 20px;
-    background-color: #D0A871;
-    color: white;
+  </template>
+  
+  <script>
+  export default {
+    data() {
+      return {
+        azkar: ["سُبْحَانَ اللَّهِ", "اللَّهُ أَكْبَرُ", "الحَمْدُ لِلَّهِ", "لا إِلٰهَ إِلَّا اللَّهُ"],
+        currentZikrIndex: 0,
+        clickCount: 0,
+        maxCount: 3,
+      };
+    },
+    computed: {
+      progressStyle() {
+        const percentage = (this.clickCount / this.maxCount) * 100;
+        return {
+          background: `conic-gradient(#D0A871 ${percentage}%, #f3f3f3 ${percentage}%)`,
+        };
+      },
+    },
+    methods: {
+      handleClick() {
+        this.clickCount++;
+        if (this.clickCount >= this.maxCount) {
+          this.clickCount = 0;
+          this.nextZikr();
+        }
+      },
+      nextZikr() {
+        this.currentZikrIndex = (this.currentZikrIndex + 1) % this.azkar.length;
+      },
+      setZikr(index) {
+        this.currentZikrIndex = index;
+        this.clickCount = 0;
+      },
+    },
+  };
+  </script>
+  
+  <style scoped>
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .title {
+    font-size: 1.7rem;
+    margin: 0;
+    color: #444;
+  }
+  
+  .zikr-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  button {
+    padding: 8px 16px;
     border: none;
-}
-
-button:hover {
-    background-color: #FBD182;
-    color: #000;
-}
-
-/* تنسيق الرسالة بعد الوصول للعدد */
-.alert {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.addbtn {
-    position: absolute;
-    bottom: 10%;
+    background: #e0e0e0;
+    color: #333;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+  
+  button.active {
+    background: #d0a871;
+    color: white;
+    transform: scale(1.1);
+  }
+  
+  .circle-wrapper {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin-top: auto;
+    margin-bottom: 30px;
+  }
+  
+  .circle {
     width: 100%;
-    margin: 10px auto;
-    right: 0;
-}
-
-@media (max-width: 768px) {
-    .counter h2 {
-        font-size: 20px;
-    }
-
-    button {
-        font-size: 18px;
-    }
-}
-</style>
+    height: 100%;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  
+  .zikr-text {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #555;
+    z-index: 2;
+    text-align: center;
+  }
+  
+  .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: background 0.4s ease;
+  }
+  </style>
+  

@@ -17,6 +17,13 @@
                 <div>المسبحة</div>
             </div>
         </router-link>
+        <router-link to="/counter" class="nav-item" active-class="active">
+            <div>
+                <img src="../assets/images/counter.png" alt="" class="icon default-icon">
+                <img src="../assets/images/counter-2.png" alt="" class="icon active-icon">
+                <div>عداد</div>
+            </div>
+        </router-link>
 
         <router-link to="/setting" class="nav-item" active-class="active">
             <div>
@@ -29,6 +36,9 @@
 </template>
 
 <style scoped>
+*{
+    font-family: "Cairo";
+}
 .icon {
     width: 24px;
 }
