@@ -66,7 +66,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    height: 100vh;
+    height: 80vh;
     padding: 20px;
     background-color: #f9f9f9;
   }
@@ -106,7 +106,6 @@
     width: 220px;
     height: 220px;
     margin-top: auto;
-    margin-bottom: 30px;
   }
   
   .circle {
