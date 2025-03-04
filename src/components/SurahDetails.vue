@@ -69,6 +69,9 @@ export default {
 }
 </script>
 <style scoped>
+.aya-text{
+    font-family: 'Amiri Quran', serif !important;
+}
 .surah-view {
     margin: 0 auto;
     padding: 0;
