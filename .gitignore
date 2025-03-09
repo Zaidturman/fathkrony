@@ -28,3 +28,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+echo "node_modules/" >> .gitignore
+echo "dist.zip" >> .gitignore
