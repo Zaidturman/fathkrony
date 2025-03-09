@@ -32,7 +32,10 @@
             <p>{{ currentZikr }}</p>
         </div>
     </div>
-    <All />
+    <All class="all"/>
+    <div class="footer">
+        برمجة وتطوير زيد طرمان
+    </div>
 </template>
 
 <script setup>
@@ -205,6 +208,14 @@ watch(prayerTimes, (newPrayerTimes) => {
 </script>
 
 <style scoped>
+.footer{
+    padding-bottom: 100px; /* المسافة أسفل المحتوى لتجنب تغطيته بالـ bottom-nav */
+
+    text-align: center;
+}
+.all{
+    margin-bottom: 20px;
+}
 * {
     font-family: "Cairo", serif;
     font-weight: 400;

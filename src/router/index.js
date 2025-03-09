@@ -12,6 +12,7 @@ import Books from "@/components/Books.vue";
 import Hadeth from "@/components/Hadeth.vue";
 import AllQuran from "@/components/AllQuran.vue";
 import Counter from "@/components/counter.vue";
+import Mosqueclockwrapper from "@/components/mosqueclockwrapper.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +44,12 @@ const router = createRouter({
     { path: "/watch", component: Watch },
     { path: "/books", component: Books },
     { path: "/hadeth", component: Hadeth },
+    { path: "/mosqu-clock", component: Mosqueclockwrapper },
+
+    {
+      path: "/:pathMatch(.*)*",
+      redirect: "/",
+    },
   ],
 });
 

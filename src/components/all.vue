@@ -65,6 +65,10 @@ const worships = [
 * {
   font-family: "Cairo";
 }
+.container{
+  margin-bottom: 20px;
+
+}
 
 /* تنسيق البطاقات */
 .card {

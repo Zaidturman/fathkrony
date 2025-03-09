@@ -24,14 +24,15 @@
                 <div>عداد</div>
             </div>
         </router-link>
-
-        <router-link to="/setting" class="nav-item" active-class="active">
+        <router-link to="/mosqu-clock" class="nav-item" active-class="active">
             <div>
-                <img src="../assets/images/settingactive.png" alt="" class="icon default-icon">
-                <img src="../assets/images/setting.png" alt="" class="icon active-icon">
-                <div>الإعدادات</div>
+                <img src="../assets/images/dome-2.png" alt="" class="icon default-icon">
+                <img src="../assets/images/dome.png" alt="" class="icon active-icon">
+                <div>ساعة المسجد</div>
             </div>
         </router-link>
+
+      
     </div>
 </template>
 
@@ -69,6 +70,8 @@
     background-color: #f8f9fa;
     padding: 10px 0;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* تأكد من أن bottom-nav يظهر في أعلى المحتوى */
+
 }
 
 .nav-item {
