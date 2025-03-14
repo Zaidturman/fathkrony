@@ -19,7 +19,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const surahs = ref([]);
-const searchQuery = ref(''); // قيمة البحث
+const searchQuery = ref(''); 
 
 onMounted(async () => {
   try {

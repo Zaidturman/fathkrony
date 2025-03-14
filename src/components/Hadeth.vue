@@ -24,9 +24,11 @@
 export default {
     data() {
         return {
-            hadiths: [], // لتخزين الأحاديث
-            loading: true, // حالة التحميل
-            error: false, // حالة الخطأ
+            hadiths: [], 
+            loading: true, 
+            
+            error: false, 
+            
         };
     },
     mounted() {
@@ -37,8 +39,9 @@ export default {
             try {
                 const response = await fetch('https://hadis-api-id.vercel.app/hadith/abu-dawud?page=2&limit=300');
                 const data = await response.json();
-                console.log(data.items);  // إضافة هذه السطر لمراجعة البيانات
-                this.hadiths = data.items; // تأكد أن هذه الخاصية موجودة
+                console.log(data.items);  
+            
+                this.hadiths = data.items;
                 this.loading = false;
             } catch (error) {
                 this.error = true;

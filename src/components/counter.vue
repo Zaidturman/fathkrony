@@ -1,22 +1,17 @@
 <template>
     <div class="container">
-      <!-- زر كتم الصوت -->
       <button class="mute-btn" @click="toggleMute">
         {{ isMuted ? '🔇' : '🔊' }}
       </button>
   
-      <!-- العداد -->
       <div class="counter">{{ count }}</div>
   
-      <!-- الدائرة الكبيرة -->
       <div class="big-circle-wrapper">
         <div class="big-circle" @click="increment"></div>
   
-        <!-- زر إعادة التعيين أعلى الدائرة -->
         <div class="small-circle" @click="reset">↻</div>
       </div>
   
-      <!-- مجموع التسبيحات -->
       <p class="total">مجموع التسبيحات <span>{{ total }}</span></p>
     </div>
   </template>
@@ -27,7 +22,7 @@
       return {
         count: 0,
         total: 0,
-        isMuted: false, // حالة كتم الصوت
+        isMuted: false, 
       };
     },
     methods: {
@@ -92,7 +87,6 @@
     border-radius: 10px;
   }
   
-  /* تغليف الدائرة الكبيرة مع زر الريست */
   .big-circle-wrapper {
     position: relative;
     display: flex;
@@ -103,7 +97,6 @@
     bottom: 100px;
   }
   
-  /* الدائرة الكبيرة */
   .big-circle {
     width: 200px;
     height: 200px;
@@ -121,7 +114,6 @@
     transform: scale(0.9);
   }
   
-  /* زر الريست أعلى الدائرة */
   .small-circle {
     position: absolute;
     top: -10px;

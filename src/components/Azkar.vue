@@ -2,7 +2,6 @@
     <div id="app" class="min-h-screen  ">
       <h1 class="text-2xl font-bold text-center  ">📖 قائمة الأذكار</h1>
   
-      <!-- قائمة الأذكار -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div
           v-for="adhkar in adhkarList"
@@ -19,20 +18,17 @@
   <script setup>
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import adhkarData from '../assets/adhkar.json'; // استيراد الملف مباشرةً
+  import adhkarData from '../assets/adhkar.json'; 
   
-  // البيانات التفاعلية
   const adhkarList = ref(adhkarData);
   const router = useRouter();
   
-  // دالة للانتقال إلى صفحة تفاصيل الذكر
   const goToAdhkarDetails = (adhkarId) => {
     router.push({ name: 'AdhkarDetails', params: { id: adhkarId } });
   };
   </script>
   
   <style scoped> 
-  /* إضافة خط Amiri Quran */
   @import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
   
   #app {

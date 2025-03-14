@@ -30,32 +30,27 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import adhkarData from '../assets/adhkar.json'; // استيراد الملف مباشرةً
-  
-  // البيانات التفاعلية
+  import adhkarData from '../assets/adhkar.json'; 
+
   const adhkar = ref({});
   const router = useRouter();
   const route = useRoute();
   
-  // دالة لتحميل بيانات الذكر
   const loadAdhkarDetails = () => {
     const adhkarId = parseInt(route.params.id);
     adhkar.value = adhkarData.find((a) => a.id === adhkarId);
   };
   
-  // دالة للرجوع إلى الصفحة الرئيسية
   const goBack = () => {
     router.push({ name: 'Home' });
   };
   
-  // تحميل البيانات عند تحميل المكون
   onMounted(() => {
     loadAdhkarDetails();
   });
   </script>
   
   <style>
-  /* إضافة خط Amiri Quran */
   @import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
   
   body {

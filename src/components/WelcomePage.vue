@@ -70,7 +70,7 @@
     background-color: #f8f9fa;
     padding: 10px 0;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* تأكد من أن bottom-nav يظهر في أعلى المحتوى */
+    z-index: 10; 
 
 }
 

@@ -8,4 +8,6 @@ import WelcomePage from './components/WelcomePage.vue';
   <WelcomePage />
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

@@ -9,7 +9,7 @@
       <div class="date-info">
         <p>{{ currentDate }}</p>
         <p>{{ currentHijriDate }}</p>
-        <p>{{ currentDay }}</p> <!-- اسم اليوم -->
+        <p>{{ currentDay }}</p> 
       </div>
 
       <div class="prayer-times">
@@ -21,7 +21,7 @@
           <div class="prayer-name">{{ getPrayerName(name) }}</div>
           <div class="prayer-time-value">{{ time }}</div>
           <div class="remaining-time">
-            <span v-if="name !== 'Fajr'">{{ getRemainingTimeForPrayer(time) }}</span>
+            <span >{{ getRemainingTimeForPrayer(time) }}</span>
           </div>
         </div>
       </div>
@@ -95,7 +95,7 @@ async function getPrayerTimes(latitude, longitude) {
     const data = await response.json();
     prayerTimes.value = data.data.timings;
     nextPrayer.value = getNextPrayer(data.data.timings);
-    isLoading.value = false; // إخفاء التحميل بعد جلب البيانات
+    isLoading.value = false; 
 
   } catch (err) {
     console.error("تعذر جلب أوقات الصلاة: " + err.message);
@@ -193,7 +193,7 @@ function getCurrentDate() {
   gregorianDate.value = formatDate(now);
   currentDay.value = now.toLocaleDateString('ar', { weekday: 'long' });
   fetchHijriDate(gregorianDate.value);
-  currentDate.value = gregorianDate.value; // تعيين التاريخ الميلادي مباشرة عند التحميل
+  currentDate.value = gregorianDate.value;
 }
 
 const filteredPrayerTimes = computed(() => {
@@ -232,7 +232,7 @@ function isNextPrayer(prayerKey) {
     background-color: #f4f4f9;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding-bottom: 60px; /* المسافة أسفل المحتوى لتجنب تغطيته بالـ bottom-nav */
+    padding-bottom: 60px;
 
   }
   

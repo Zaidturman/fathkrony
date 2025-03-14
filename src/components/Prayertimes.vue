@@ -1,7 +1,6 @@
 <template>
     <div class="container">
   
-      <!-- أزرار اختيار الذكر -->
       <div class="zikr-buttons">
         <button
           v-for="(zikr, index) in azkar"
@@ -13,7 +12,6 @@
         </button>
       </div>
   
-      <!-- دائرة التسبيح -->
       <div class="circle-wrapper">
         <div class="circle" @click="handleClick">
           <p class="zikr-text">{{ azkar[currentZikrIndex] }}</p>

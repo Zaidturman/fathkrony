@@ -88,7 +88,6 @@
     font-size: 1.2rem;
   }
   
-  /* تصميم السويتش */
   .switch {
     position: relative;
     display: inline-block;
@@ -134,7 +133,6 @@
     transform: translateX(22px);
   }
   
-  /* تعديل لون الخلفية للجسم */
   body.dark-theme {
     background-color: #121212;
     color: white;

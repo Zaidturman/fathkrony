@@ -1,4 +1,4 @@
-<template>
+<template >
     <div class="prayer-times-wrapper">
         <div class="location-header">
             <div class="date-info">
@@ -25,17 +25,19 @@
         </div>
 
         <p v-if="error" class="error-message">⚠️ {{ error }}</p>
-    </div>
-
-    <div class="bgdiv">
+        <div class="bgdiv">
         <div>
             <p>{{ currentZikr }}</p>
         </div>
     </div>
+
     <All class="all"/>
     <div class="footer">
         برمجة وتطوير زيد طرمان
     </div>
+    </div>
+
+  
 </template>
 
 <script setup>
@@ -43,8 +45,8 @@ import { ref, onMounted, computed, watch } from 'vue';
 import All from './all.vue';
 import Quran from './quran.vue';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import 'sweetalert2/dist/sweetalert2.min.css'; // لضمان تحميل التصميم
-import azkarData from "../assets/theker.json"; // تأكد من صحة المسار
+import 'sweetalert2/dist/sweetalert2.min.css'; 
+import azkarData from "../assets/theker.json"; 
 
 const azkar = azkarData.azkar;
 const currentZikr = ref("");
@@ -55,8 +57,8 @@ const getRandomZikr = () => {
 };
 
 onMounted(() => {
-    getRandomZikr(); // تحميل ذكر عند فتح الصفحة
-    setInterval(getRandomZikr, 3600000); // تحديث الذكر كل ساعة (3600000ms = 1 ساعة)
+    getRandomZikr(); 
+    setInterval(getRandomZikr, 3600000);
 });
 
 const location = ref({ latitude: null, longitude: null, city: '', country: '' });
@@ -64,7 +66,7 @@ const error = ref(null);
 const gregorianDate = ref('');
 const hijriDate = ref('');
 const prayerTimes = ref(null);
-const nextPrayer = ref(null); // سيتم تحديثه تلقائيًا
+const nextPrayer = ref(null); 
 
 onMounted(() => {
     getLocation();
@@ -155,7 +157,6 @@ async function getPrayerTimes(latitude, longitude) {
     }
 }
 
-// تصفية أوقات الصلاة لعرض الفجر، الظهر، العصر، المغرب، والعشاء فقط
 const filteredPrayerTimes = computed(() => {
     if (!prayerTimes.value) return {};
     const { Fajr, Dhuhr, Asr, Maghrib, Isha } = prayerTimes.value;
@@ -177,22 +178,18 @@ function isNextPrayer(prayerKey) {
     return nextPrayer.value === prayerKey;
 }
 
-// دالة لتحديد الصلاة التالية
 function getNextPrayer(prayerTimes) {
-    const now = new Date(); // الوقت الحالي
+    const now = new Date(); 
 
-    // تحويل أوقات الصلاة إلى كائنات Date
     const prayerTimesWithDates = Object.entries(prayerTimes).map(([name, time]) => {
         const [hours, minutes] = time.split(':');
         const date = new Date();
-        date.setHours(hours, minutes, 0, 0); // تعيين الساعة والدقيقة
+        date.setHours(hours, minutes, 0, 0);
         return { name, time: date };
     });
 
-    // تصفية الصلوات التي لم تحدث بعد
     const upcomingPrayers = prayerTimesWithDates.filter((prayer) => prayer.time > now);
 
-    // إذا كانت هناك صلوات قادمة، نختار الأقرب
     if (upcomingPrayers.length > 0) {
         const next = upcomingPrayers.reduce((prev, curr) =>
             prev.time < curr.time ? prev : curr
@@ -200,18 +197,15 @@ function getNextPrayer(prayerTimes) {
         return next.name;
     }
 
-    // إذا لم تكن هناك صلوات قادمة، نعود إلى أول صلاة في اليوم التالي
     return prayerTimesWithDates[0].name;
 }
 
-// دالة لتحديث الصلاة التالية كل دقيقة
 function startNextPrayerUpdate(prayerTimes) {
     setInterval(() => {
         nextPrayer.value = getNextPrayer(prayerTimes);
-    }, 60000); // تحديث كل دقيقة
+    }, 60000); 
 }
 
-// عند تغيير prayerTimes، نقوم بتحديث الصلاة التالية
 watch(prayerTimes, (newPrayerTimes) => {
     if (newPrayerTimes) {
         nextPrayer.value = getNextPrayer(newPrayerTimes);
@@ -221,9 +215,9 @@ watch(prayerTimes, (newPrayerTimes) => {
 </script>
 
 <style scoped>
-.footer{
-    padding-bottom: 100px; /* المسافة أسفل المحتوى لتجنب تغطيته بالـ bottom-nav */
 
+.footer{
+    padding-bottom: 100px; 
     text-align: center;
 }
 .all{
@@ -238,16 +232,11 @@ watch(prayerTimes, (newPrayerTimes) => {
 .bgdiv {
     display: flex;
     height: 70px;
- 
     justify-content: center;
     align-items: center;
     border-radius: 15px;
     margin: 0;
     background: linear-gradient(to right, #ebc58f, #F5CD87);
-   
-
-    /* إضافة Shadow */
-
     p {
         font-weight: 500;
         font-size: 1.25em;
@@ -256,7 +245,7 @@ watch(prayerTimes, (newPrayerTimes) => {
 }
 
 .prayer-times-wrapper {
-    max-width: 600px;
+    max-width: 90%;
     margin: 0 auto;
     padding: 16px;
     font-family: 'Cairo', sans-serif;
@@ -296,13 +285,10 @@ watch(prayerTimes, (newPrayerTimes) => {
 .prayer-times-container {
     display: flex;
     justify-content: flex-start;
-    /* تغيير إلى flex-start */
     gap: 12px;
     padding: 16px;
     overflow-x: auto;
-    /* إضافة سكرول أفقي */
     white-space: nowrap;
-    /* منع العناصر من الانتقال لسطر جديد */
 }
 
 .prayer-time {
@@ -311,9 +297,7 @@ watch(prayerTimes, (newPrayerTimes) => {
     background: #ffffff;
     border-radius: 8px;
     min-width: 80px;
-    /* عرض ثابت لكل عنصر */
     flex: 0 0 auto;
-    /* منع العناصر من التمدد */
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
@@ -345,39 +329,28 @@ watch(prayerTimes, (newPrayerTimes) => {
 
 .imagesection {
     width: 90%;
-    /* أقل من عرض الشاشة بقليل */
     max-width: 800px;
-    /* أقصى عرض للصورة */
     margin: 0 auto;
-    /* توسيط الصورة أفقياً */
     border-radius: 8px;
-    /* زوايا مدورة */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* تأثير ظل خفيف */
     overflow: hidden;
     height: 200px;
-    /* لإخفاء الأجزاء الزائدة من الصورة */
 }
 
 .imagesection img {
     width: 100%;
-    /* تغطية عرض العنصر بالكامل */
     height: auto;
-    /* الحفاظ على نسبة الطول إلى العرض */
     display: block;
     z-index: -1;
     width: 100%;
     height: 100%;
     height: 200px;
-    /* لإزالة المسافة الإضافية أسفل الصورة */
 }
 
 .imagesection content {
     position: relative;
     z-index: 999;
-    /* لجعل النصوص تظهر فوق الصورة */
     color: white;
-    /* لون النص */
     text-align: center;
     padding-top: 20%;
 }
