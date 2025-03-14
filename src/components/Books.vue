@@ -7,13 +7,13 @@
             <div v-for="book in books" :key="book.id" class="book-card">
                 <h3>{{ book.title }}</h3>
                 <p>{{ book.description }}</p>
-                <button @click="selectedBook = book.attachments[0].url" class="view-button">عرض الكتاب</button>
+                <a :href="book.attachments[0].url" download class="download-button">عرض الكتاب</a>
             </div>
         </div>
 
         <div v-if="selectedBook" class="book-viewer">
             <button @click="selectedBook = null" class="close-button">إغلاق</button>
-            <iframe :src="selectedBook" frameborder="0"></iframe>
+            <embed :src="selectedBook" type="application/pdf" width="80%" height="80%" class="pdf-viewer"/>
         </div>
     </div>
 </template>
@@ -43,6 +43,9 @@ export default {
             } finally {
                 this.loading = false;
             }
+        },
+        openBook(url) {
+            this.selectedBook = url;
         }
     }
 };
@@ -75,7 +78,7 @@ export default {
     color: #555;
 }
 
-.view-button {
+.view-button, .download-button {
     display: inline-block;
     margin-top: 10px;
     padding: 8px 12px;
@@ -86,9 +89,10 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;
+    margin-right: 5px;
 }
 
-.view-button:hover {
+.view-button:hover, .download-button:hover {
     background: #0056b3;
 }
 
@@ -105,9 +109,7 @@ export default {
     flex-direction: column;
 }
 
-iframe {
-    width: 80%;
-    height: 80%;
+.pdf-viewer {
     border-radius: 8px;
     background: #fff;
 }
