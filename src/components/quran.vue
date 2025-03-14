@@ -49,4 +49,58 @@ const goToSurah = (id) => {
 };
 </script>
 
-<style></style>
+<style scoped>
+.quran {
+  text-align: center;
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+h3 {
+  font-size: 32px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.surahContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.surah {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.surah:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.surah p {
+  margin: 5px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #34495e;
+}
+
+.surah p:last-child {
+  font-size: 14px;
+  color: #7f8c8d;
+}
+</style>

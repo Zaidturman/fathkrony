@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import App from "@/App.vue";
 import Prayertimes from "@/components/Prayertimes.vue";
 import SettingPage from "@/components/SettingPage.vue";
@@ -10,12 +10,11 @@ import Azkar from "@/components/Azkar.vue";
 import Watch from "@/components/Watch.vue";
 import Books from "@/components/Books.vue";
 import Hadeth from "@/components/Hadeth.vue";
-import AllQuran from "@/components/AllQuran.vue";
 import Counter from "@/components/counter.vue";
 import Mosqueclockwrapper from "@/components/mosqueclockwrapper.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
       path: "/",

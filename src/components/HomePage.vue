@@ -42,7 +42,8 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import All from './all.vue';
 import Quran from './quran.vue';
-
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import 'sweetalert2/dist/sweetalert2.min.css'; // لضمان تحميل التصميم
 import azkarData from "../assets/theker.json"; // تأكد من صحة المسار
 
 const azkar = azkarData.azkar;
@@ -73,6 +74,13 @@ onMounted(() => {
 async function getLocation() {
     if (!navigator.geolocation) {
         error.value = "المتصفح لا يدعم تحديد الموقع الجغرافي.";
+        Swal.fire({
+      title: "خطأ",
+      text: "المتصفح لا يدعم تحديد الموقع الجغرافي.",
+      icon: "error",
+      confirmButtonText: "حسنًا",
+    });
+    return;
         return;
     }
 
@@ -87,7 +95,12 @@ async function getLocation() {
         },
         (err) => {
             error.value = "تعذر الحصول على الموقع: " + err.message;
-        }
+            Swal.fire({
+        title: "تنبيه",
+        text: "يجب الموافقة على مشاركة الموقع لجلب أوقات الصلاة",
+        icon: "warning",
+        confirmButtonText: "موافق",
+      });        }
     );
 }
 
