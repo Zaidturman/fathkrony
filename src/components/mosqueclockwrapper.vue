@@ -1,46 +1,50 @@
 <template>
-  <div class="mosque-clock-wrapper">
-    <div v-if="isLoading" class="loading">
+  <div class="mosque-clock-container">
+    <div v-if="isLoading" class="loading-screen">
       <div class="spinner"></div>
-      <p>جاري التحميل...</p>
+      <p class="loading-text">جاري تحميل البيانات...</p>
     </div>
-    <div v-else class="content">
-      <div class="header-section">
-        <div class="current-time">
-          <p>{{ currentTime }}</p>
-        </div>
 
-        <div class="date-info">
-          <p class="hijri-date">{{ currentHijriDate }}</p>
-          <p class="gregorian-date">{{ currentDate }}</p>
-          <p class="day-name">{{ currentDay }}</p> 
+    <div v-else class="main-content">
+      <!-- القسم العلوي - الوقت والتاريخ -->
+      <div class="header-section">
+        <div class="time-display">
+          <h1>{{ currentTime }}</h1>
+        </div>
+        
+        <div class="date-display">
+          <div class="hijri-date">{{ currentHijriDate }}</div>
+          <div class="gregorian-date">{{ currentDate }}</div>
+          <div class="day-name">{{ currentDay }}</div>
         </div>
       </div>
 
-      <div class="prayer-times">
-        <div
-          v-for="(time, name) in filteredPrayerTimes"
+      <!-- أوقات الصلاة -->
+      <div class="prayer-times-section">
+        <div 
+          v-for="(time, name) in filteredPrayerTimes" 
           :key="name"
-          :class="['prayer-time', { 'next-prayer': isNextPrayer(name) }]"
+          :class="['prayer-card', { 'next-prayer': isNextPrayer(name) }]"
         >
           <div class="prayer-name">{{ getPrayerName(name) }}</div>
-          <div class="prayer-time-container">
-            <div class="prayer-time-value">{{ time }}</div>
-            <div class="remaining-time">
-              <span>{{ getRemainingTimeForPrayer(time) }}</span>
-            </div>
+          <div class="prayer-time">{{ time }}</div>
+          <div class="time-remaining">
+            <span v-if="!isPrayerPassed(time)">{{ getRemainingTimeForPrayer(time) }}</span>
+            <span v-else class="passed">تمت الصلاة</span>
           </div>
         </div>
       </div>
 
-      <div class="footer-section">
-        <div class="time-info-card">
-          <p class="info-label">الوقت المتبقي للإقامة:</p>
-          <p class="info-value">{{ remainingTimeForIqama }}</p>
+      <!-- معلومات إضافية -->
+      <div class="info-section">
+        <div class="info-card iqama-time">
+          <div class="info-title">الوقت المتبقي للإقامة</div>
+          <div class="info-value">{{ remainingTimeForIqama }}</div>
         </div>
-        <div class="time-info-card accent">
-          <p class="info-label">الوقت المتبقي للصلاة التالية:</p>
-          <p class="info-value">{{ remainingTimeForNextPrayer }}</p>
+        
+        <div class="info-card next-prayer-time">
+          <div class="info-title">الصلاة القادمة</div>
+          <div class="info-value">{{ getPrayerName(nextPrayer) }} - {{ remainingTimeForNextPrayer }}</div>
         </div>
       </div>
     </div>
@@ -52,8 +56,6 @@ import { ref, onMounted, computed } from 'vue';
 
 const isLoading = ref(true);
 const location = ref({ latitude: null, longitude: null });
-const gregorianDate = ref('');
-const hijriDate = ref('');
 const currentTime = ref('');
 const prayerTimes = ref(null);
 const nextPrayer = ref(null);
@@ -70,144 +72,154 @@ const prayerIqamaTimes = {
   Isha: 10
 };
 
+// الدوال الأساسية
 onMounted(async () => {
   await getLocation();
-  getCurrentDate();
-  updateNextPrayer();
-  updateTime();
-
-  setInterval(updateNextPrayer, 60000);
-  setInterval(updateTime, 1000);
-  setInterval(toggleDate, 30000);
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+  setInterval(updateNextPrayerInfo, 60000);
 });
 
 async function getLocation() {
-  if (!navigator.geolocation) {
-    console.error("المتصفح لا يدعم تحديد الموقع الجغرافي.");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const { latitude, longitude } = position.coords;
-      location.value.latitude = latitude;
-      location.value.longitude = longitude;
-      await getPrayerTimes(latitude, longitude);
-    },
-    (err) => {
-      console.error("تعذر الحصول على الموقع: " + err.message);
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      console.error("المتصفح لا يدعم تحديد الموقع");
+      reject();
+      return;
     }
-  );
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        location.value = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        await fetchPrayerTimes();
+        resolve();
+      },
+      (error) => {
+        console.error("خطأ في الحصول على الموقع:", error);
+        // استخدام موقع افتراضي في حالة الخطأ
+        location.value = { latitude: 24.7136, longitude: 46.6753 }; // الرياض
+        fetchPrayerTimes().then(resolve);
+      }
+    );
+  });
 }
 
-async function getPrayerTimes(latitude, longitude) {
-  const url = `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=1`;
-
+async function fetchPrayerTimes() {
   try {
-    const response = await fetch(url);
+    const response = await fetch(
+      `https://api.aladhan.com/v1/timings?latitude=${location.value.latitude}&longitude=${location.value.longitude}&method=4`
+    );
     const data = await response.json();
     prayerTimes.value = data.data.timings;
-    nextPrayer.value = getNextPrayer(data.data.timings);
-    isLoading.value = false; 
-
-  } catch (err) {
-    console.error("تعذر جلب أوقات الصلاة: " + err.message);
+    updateNextPrayerInfo();
+    await fetchHijriDate();
+    isLoading.value = false;
+  } catch (error) {
+    console.error("خطأ في جلب أوقات الصلاة:", error);
   }
 }
 
-function getPrayerName(prayerKey) {
-  return {
-    Fajr: 'الفجر',
-    Dhuhr: 'الظهر',
-    Asr: 'العصر',
-    Maghrib: 'المغرب',
-    Isha: 'العشاء'
-  }[prayerKey];
-}
-
-function getNextPrayer(prayerTimes) {
+function updateDateTime() {
   const now = new Date();
-  const prayerTimesWithDates = Object.entries(prayerTimes).map(([name, time]) => {
-    const [hours, minutes] = time.split(':');
-    const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return { name, time: date };
+  
+  // تحديث الوقت الحالي
+  currentTime.value = now.toLocaleTimeString('ar-SA', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    second: '2-digit'
   });
+  
+  // تحديث التاريخ الميلادي
+  currentDate.value = now.toLocaleDateString('ar-SA', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+  
+  // تحديث اليوم
+  currentDay.value = now.toLocaleDateString('ar-SA', { weekday: 'long' });
+}
 
-  const upcomingPrayers = prayerTimesWithDates.filter((prayer) => prayer.time > now);
-
-  if (upcomingPrayers.length > 0) {
-    return upcomingPrayers.reduce((prev, curr) => prev.time < curr.time ? prev : curr).name;
+async function fetchHijriDate() {
+  try {
+    const today = new Date();
+    const dateStr = `${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`;
+    const response = await fetch(`https://api.aladhan.com/v1/gToH/${dateStr}`);
+    const data = await response.json();
+    
+    if (data.code === 200) {
+      const hijri = data.data.hijri;
+      currentHijriDate.value = `${hijri.day} ${hijri.month.ar} ${hijri.year} هـ`;
+    }
+  } catch (error) {
+    console.error("خطأ في جلب التاريخ الهجري:", error);
   }
-  return prayerTimesWithDates[0].name;
+}
+
+function updateNextPrayerInfo() {
+  if (!prayerTimes.value) return;
+  
+  nextPrayer.value = getNextPrayer();
+  remainingTimeForNextPrayer.value = getRemainingTimeForPrayer(prayerTimes.value[nextPrayer.value]);
+}
+
+function getNextPrayer() {
+  const now = new Date();
+  const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+  
+  for (const prayer of prayers) {
+    const prayerTime = convertTimeStringToDate(prayerTimes.value[prayer]);
+    if (prayerTime > now) return prayer;
+  }
+  
+  // إذا مرت جميع الصلوات، نعود لصلاة الفجر التالية
+  return 'Fajr';
+}
+
+function convertTimeStringToDate(timeStr) {
+  const [hours, minutes] = timeStr.split(':');
+  const date = new Date();
+  date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+  return date;
 }
 
 function getRemainingTimeForPrayer(prayerTime) {
   const now = new Date();
-  const [hours, minutes] = prayerTime.split(':');
-  const prayerDate = new Date();
-  prayerDate.setHours(hours, minutes, 0, 0);
-
-  const remainingTime = prayerDate - now;
-  if (remainingTime < 0) return 'تمت الصلاة';
-
-  const hoursLeft = Math.floor(remainingTime / 3600000);
-  const minutesLeft = Math.floor((remainingTime % 3600000) / 60000);
-  return `${hoursLeft} ساعة ${minutesLeft} دقيقة`;
+  const prayerDate = convertTimeStringToDate(prayerTime);
+  
+  if (prayerDate < now) return 'تمت الصلاة';
+  
+  const diff = prayerDate - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  
+  return `${hours} ساعة ${minutes} دقيقة`;
 }
 
-function getRemainingTimeForNextPrayer() {
-  if (!nextPrayer.value) return '';
-  return getRemainingTimeForPrayer(prayerTimes.value[nextPrayer.value]);
-}
-
-function updateNextPrayer() {
-  if (prayerTimes.value) {
-    nextPrayer.value = getNextPrayer(prayerTimes.value);
-    remainingTimeForNextPrayer.value = getRemainingTimeForNextPrayer();
-  }
-}
-
-function updateTime() {
-  currentTime.value = new Date().toLocaleTimeString('ar');
-}
-
-function toggleDate() {
-  currentDate.value = currentDate.value === gregorianDate.value ? hijriDate.value : gregorianDate.value;
-}
-
-const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
-
-async function fetchHijriDate(gregorianDate, calendarMethod = 'HJCoSA') {
-  const url = `https://api.aladhan.com/v1/gToH/${gregorianDate}?calendarMethod=${calendarMethod}`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.code === 200 && data.data) {
-      hijriDate.value = data.data.hijri.date;
-      currentDay.value = data.data.hijri.weekday.ar;
-    } else {
-      console.error("Data not available:", data);
-    }
-  } catch (error) {
-    console.error("Error fetching Hijri date:", error);
-  }
-}
-
-function getCurrentDate() {
+function isPrayerPassed(prayerTime) {
   const now = new Date();
-  gregorianDate.value = formatDate(now);
-  currentDay.value = now.toLocaleDateString('ar', { weekday: 'long' });
-  fetchHijriDate(gregorianDate.value);
-  currentDate.value = gregorianDate.value;
+  const prayerDate = convertTimeStringToDate(prayerTime);
+  return prayerDate < now;
 }
+
+const remainingTimeForIqama = computed(() => {
+  if (!nextPrayer.value) return '';
+  const prayerTime = convertTimeStringToDate(prayerTimes.value[nextPrayer.value]);
+  const iqamaMinutes = prayerIqamaTimes[nextPrayer.value];
+  const iqamaTime = new Date(prayerTime.getTime() + iqamaMinutes * 60000);
+  
+  const now = new Date();
+  if (iqamaTime < now) return 'تمت الإقامة';
+  
+  const diff = iqamaTime - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  
+  return `${hours} ساعة ${minutes} دقيقة`;
+});
 
 const filteredPrayerTimes = computed(() => {
   if (!prayerTimes.value) return {};
@@ -215,144 +227,146 @@ const filteredPrayerTimes = computed(() => {
   return { Fajr, Dhuhr, Asr, Maghrib, Isha };
 });
 
+function getPrayerName(prayerKey) {
+  const names = {
+    Fajr: 'الفجر',
+    Dhuhr: 'الظهر',
+    Asr: 'العصر',
+    Maghrib: 'المغرب',
+    Isha: 'العشاء'
+  };
+  return names[prayerKey];
+}
+
 function isNextPrayer(prayerKey) {
   return nextPrayer.value === prayerKey;
 }
 </script>
 
-
-
 <style scoped>
-* {
-  font-family: "Tajawal", "the-year-of-the-camel", sans-serif;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
-.mosque-clock-wrapper {
-  max-width: 800px;
+
+.mosque-clock-container {
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  text-align: center;
-  direction: rtl;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   min-height: 100vh;
+  direction: rtl;
 }
 
-.loading {
+.loading-screen {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-size: 1.5em;
-  color: #5a5a5a;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #8e6c88;
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(142, 108, 136, 0.2);
   border-radius: 50%;
+  border-top-color: #8e6c88;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
 }
 
+.loading-text {
+  font-size: 1.2rem;
+  color: #5a5a5a;
+}
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
 .header-section {
-  background-color: #fff;
-  padding: 20px;
+  background-color: rgb(250, 250, 250);
   border-radius: 15px;
-  margin-bottom: 25px;
+  padding: 20px;
+  margin-bottom: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
-.current-time {
-  font-size: 2.5em;
-  font-weight: bold;
+.time-display h1 {
+  font-size: 3rem;
   color: #2c3e50;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
-.date-info {
+.date-display {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-.date-info p {
-  font-size: 1.1em;
-  color: #5a5a5a;
-}
-
 .hijri-date {
   color: #8e6c88;
   font-weight: bold;
+  font-size: 1.1rem;
 }
 
 .gregorian-date {
   color: #4a6baf;
+  font-size: 1.1rem;
 }
 
 .day-name {
   color: #2c786c;
   font-weight: bold;
+  font-size: 1.1rem;
 }
 
-.prayer-times {
+.prayer-times-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
-.prayer-time {
-  background-color: #ffffff;
+.prayer-card {
+  background-color: rgb(250, 250, 250);
+
   border-radius: 12px;
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center;
 }
 
-.prayer-time:hover {
+.prayer-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 .prayer-name {
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1.2rem;
   color: #2c3e50;
   margin-bottom: 10px;
 }
 
-.prayer-time-value {
-  font-size: 1.3em;
+.prayer-time {
+  font-size: 1.3rem;
   font-weight: bold;
   color: #2c786c;
   margin-bottom: 5px;
 }
 
-.remaining-time {
-  font-size: 0.8em;
+.time-remaining {
+  font-size: 0.85rem;
   color: #7f8c8d;
+}
+
+.time-remaining .passed {
+  color: #e74c3c;
 }
 
 .next-prayer {
   background: linear-gradient(135deg, #f5cd87 0%, #e8b563 100%);
-  color: #2c3e50;
   position: relative;
   overflow: hidden;
 }
@@ -360,76 +374,70 @@ function isNextPrayer(prayerKey) {
 .next-prayer::after {
   content: "القادمة";
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 8px;
+  left: 8px;
   background-color: #e74c3c;
   color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.7em;
-}
-
-.footer-section {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.time-info-card {
-  flex: 1;
-  background-color: #fff;
-  padding: 15px;
+  padding: 2px 10px;
   border-radius: 12px;
+  font-size: 0.7rem;
+}
+
+.info-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.info-card {
+  background-color: rgb(250, 250, 250);
+
+  border-radius: 12px;
+  padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
-.time-info-card.accent {
-  background: linear-gradient(135deg, #8e6c88 0%, #6d4c7b 100%);
-  color: white;
+.iqama-time {
+  border-bottom: 4px solid #8e6c88;
 }
 
-.info-label {
-  font-size: 0.9em;
-  margin-bottom: 5px;
+.next-prayer-time {
+  border-bottom: 4px solid #2c786c;
+}
+
+.info-title {
+  font-size: 0.9rem;
   color: #7f8c8d;
-}
-
-.time-info-card.accent .info-label {
-  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 5px;
 }
 
 .info-value {
-  font-size: 1.1em;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #2c3e50;
 }
 
-.time-info-card.accent .info-value {
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .prayer-times {
+@media (max-width: 600px) {
+  .time-display h1 {
+    font-size: 2.5rem;
+  }
+  
+  .prayer-times-section {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  .footer-section {
-    flex-direction: column;
-  }
-  
-  .current-time {
-    font-size: 2em;
-  }
 }
 
-@media (max-width: 480px) {
-  .prayer-times {
+@media (max-width: 400px) {
+  .prayer-times-section {
     grid-template-columns: 1fr;
+    
   }
   
-  .date-info {
+  .date-display {
     flex-direction: column;
+  }
+  .mosque-clock-container{
+    margin-bottom: 100px;
   }
 }
 </style>
