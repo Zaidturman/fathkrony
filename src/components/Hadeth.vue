@@ -2,7 +2,7 @@
     <div class="container mt-5">
         <h1 class="text-center mb-4">أحاديث أبي داود</h1>
         <div class="row">
-            <div class="col-md-4" v-for="hadith in hadiths" :key="hadith.id">
+            <div class="col-md-4" v-for="hadith in hadethStore.hadiths" :key="hadith.id">
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title hadith-number">الحديث رقم: {{ hadith.number }}</h5>
@@ -11,46 +11,24 @@
                 </div>
             </div>
         </div>
-        <div v-if="loading" class="text-center">
+        <div v-if="hadethStore.loading" class="text-center">
             <span class="spinner-border spinner-border-sm"></span> جاري التحميل...
         </div>
-        <div v-if="error" class="alert alert-danger">
+        <div v-if="hadethStore.error" class="alert alert-danger">
             خطأ في تحميل الأحاديث.
         </div>
     </div>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            hadiths: [], 
-            loading: true, 
-            
-            error: false, 
-            
-        };
-    },
-    mounted() {
-        this.fetchHadiths();
-    },
-    methods: {
-        async fetchHadiths() {
-            try {
-                const response = await fetch('https://hadis-api-id.vercel.app/hadith/abu-dawud?page=2&limit=300');
-                const data = await response.json();
-                console.log(data.items);  
-            
-                this.hadiths = data.items;
-                this.loading = false;
-            } catch (error) {
-                this.error = true;
-                this.loading = false;
-            }
-        }
+<script setup>
+import { onMounted } from 'vue';
+import { useHadethStore } from '@/stores/hadeth';
 
-    },
-};
+const hadethStore = useHadethStore();
+
+onMounted(() => {
+  hadethStore.loadHadiths();
+});
 </script>
 
 <style scoped>

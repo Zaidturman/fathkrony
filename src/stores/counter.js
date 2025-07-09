@@ -1,12 +1,19 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useCounterStore = defineStore('counter', () => {
-  const count = ref(0)
-  const doubleCount = computed(() => count.value * 2)
-  function increment() {
-    count.value++
-  }
-
-  return { count, doubleCount, increment }
+// Store خاص بعداد التسبيح (Counter)
+export const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0,
+  }),
+  actions: {
+    increment() {
+      this.count++
+    },
+    decrement() {
+      if (this.count > 0) this.count--
+    },
+    reset() {
+      this.count = 0
+    },
+  },
 })

@@ -37,9 +37,7 @@
 </template>
 
 <style scoped>
-*{
-    font-family: "Cairo";
-}
+
 .icon {
     width: 24px;
 }
@@ -59,7 +57,6 @@
 .nav-item.active .active-icon {
     display: block;
 }
-
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -70,24 +67,50 @@
     background-color: #f8f9fa;
     padding: 10px 0;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 10; 
-
+    z-index: 1000;
 }
 
 .nav-item {
     text-decoration: none;
     color: #2c3e50;
-    font-size: 16px;
+    font-size: 0.75rem; /* تصغير حجم الخط للهواتف */
+    flex: 1;
+    text-align: center;
+    padding: 5px;
 }
 
 .nav-item div {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
 }
 
-.nav-item.active {
-    color: var(--color-gold-dark);
+.icon {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 480px) {
+    .nav-item {
+        font-size: 0.65rem;
+    }
+    .icon {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* تحسينات للشاشات المتوسطة والكبيرة */
+@media (min-width: 768px) {
+    .nav-item {
+        font-size: 0.85rem;
+    }
+    .icon {
+        width: 24px;
+        height: 24px;
+    }
 }
 </style>

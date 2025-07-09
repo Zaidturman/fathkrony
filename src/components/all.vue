@@ -1,15 +1,13 @@
 <template>
-  <div class="container text-center mt-2">
-    <h1 class="mb-4 mt-4 title font-weight-bold ">جميع العبادات</h1>
+  <div class="container text-center mt-2 worships-container">
+    <h1 class="mb-4 mt-4 title">جميع العبادات</h1>
 
-    <div class="row">
-      <div v-for="(worship, index) in worships" :key="index" class="col-6 mb-3">
-        <router-link :to="worship.route" class="text-decoration-none">
-          <div class="card h-100 ">
-            <div class="card-body d-flex flex-column align-items-center">
-            
-              <h5 class="card-title text-dark">{{ worship.title }}</h5>
-            </div>
+    <div class="row justify-content-center">
+      <div v-for="(worship, index) in worships" :key="index" class="col-6 col-md-4 col-lg-3 mb-4">
+        <router-link :to="worship.route" class="text-decoration-none worship-link">
+          <div class="worship-card">
+            <div class="worship-icon">{{ worship.icon }}</div>
+            <h5 class="worship-title">{{ worship.title }}</h5>
           </div>
         </router-link>
       </div>
@@ -24,34 +22,32 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const worships = [
   {
     title: "المصحف",
-    icon: '../assets/images/koran.png',
+    icon: '📖', // أيقونة كتاب
     route: '/quran',
   },
   {
     title: "الأذكار",
-    icon: '../assets/images/bismillah.png',
+    icon: '🕌', // أيقونة مسجد
     route: '/azkar',
   },
-
   {
     title: "جميع الأدعية",
-    icon: '../assets/images/hands.png',
+    icon: '🤲', // أيقونة يدين متضرعتين
     route: '/adia',
-
   },
   {
     title: "فيديوهات دينية",
-    icon: '../assets/images/beads.png',
+    icon: '🎥', // أيقونة كاميرا
     route: '/watch',
   },
   {
     title: "كتب دينية",
-    icon: '../assets/images/beads.png',
+    icon: '📚', // أيقونة كتب
     route: '/books',
   },
   {
     title: "الأحاديث النبوية",
-    icon: '../assets/images/beads.png',
+    icon: '💬', // أيقونة حديث
     route: '/hadeth',
   },
 ];
@@ -59,53 +55,121 @@ const worships = [
 
 <style scoped>
 * {
-  font-family: "Cairo";
-}
-.container{
-  margin-bottom: 20px;
-
+  font-family: "the-year-of-the-camel", serif;
 }
 
-.card {
-  border-radius: 10px;
-  transition: transform 0.3s ease;
-  background-color: #ffffff;
-  border: none
+.worships-container {
+  padding: 0 15px;
 }
 
-.card-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
+.title {
+  font-size: 2rem;
+  color: #D0A871;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem !important;
+  position: relative;
+  display: inline-block;
+  font-weight: 700 !important;
 }
 
-.card:hover {
-  transform: scale(1.05);
-  background-color: #f0f8ff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: #D0A871;
+  border-radius: 3px;
 }
 
-.icon {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  border-radius: 50%;
-  background-color: #e8e8e8;
-  padding: 10px;
+.worship-link {
+  display: block;
+  height: 100%;
 }
 
-.card-body {
+.worship-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px 10px;
+  height: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(208, 168, 113, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.worship-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(208, 168, 113, 0.2);
+  border-color: #D0A871;
+}
+
+.worship-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-}
-
-h1 {
-  font-size: 30px;
+  background: rgba(208, 168, 113, 0.1);
+  border-radius: 50%;
   color: #D0A871;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  font-family: 'Cairo', sans-serif;
 }
 
+.worship-card:hover .worship-icon {
+  transform: scale(1.1);
+  background: rgba(208, 168, 113, 0.2);
+}
+
+.worship-title {
+  font-size: 1.1rem;
+  font-weight: 700 !important;
+  color: #333;
+  margin: 0;
+  transition: all 0.3s ease;
+}
+
+.worship-card:hover .worship-title {
+  color: #D0A871;
+}
+
+/* تحسينات للهواتف الصغيرة */
+@media (max-width: 576px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .worship-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .worship-title {
+    font-size: 0.9rem;
+  }
+}
+
+/* تحسينات للأجهزة اللوحية */
+@media (min-width: 768px) {
+  .worship-card {
+    padding: 25px 15px;
+  }
+  
+  .worship-icon {
+    font-size: 3rem;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .worship-title {
+    font-size: 1.2rem;
+  }
+}
 </style>

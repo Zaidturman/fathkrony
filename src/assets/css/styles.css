@@ -1,10 +1,15 @@
 /* Navbar Styles */
+@font-face {
+    font-family: 'the-year-of-the-camel';
+    src: url('../fonts/TheYearofTheCamel-Regular.ttf');
+}
+
 .navbar-brand {
-    font-family: 'thuluth-decorated' !important;
+    font-family: 'the-year-of-the-camel' !important;
 }
 
 * {
-    font-family: 'Amiri Quran', serif;
+    font-family: 'the-year-of-the-camel';
 }
 
 /* Quran Section */
@@ -13,7 +18,7 @@ section h3 {
     color: var(--color-gold-dark);
     /* تغيير لون العنوان */
     text-align: center;
-    font-family: 'katibeh';
+    font-family: 'the-year-of-the-camel';
 }
 
 .ayat-name {
@@ -71,7 +76,7 @@ audio {
 .surahNum {
     font-size: 1.3em;
     margin: -1.1em 0 1.2em 0;
-    font-family: 'katibeh';
+    font-family: 'the-year-of-the-camel';
 }
 
 .surahName {

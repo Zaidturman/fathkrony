@@ -8,6 +8,8 @@ import WelcomePage from './components/WelcomePage.vue';
   <WelcomePage />
 </template>
 
-<style scoped>
-
+<style >
+*{
+  font-family: "the-year-of-the-camel", serif !important;
+}
 </style>

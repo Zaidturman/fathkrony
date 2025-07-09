@@ -27,7 +27,7 @@
         <p v-if="error" class="error-message">⚠️ {{ error }}</p>
         <div class="bgdiv">
         <div>
-            <p>{{ currentZikr }}</p>
+            <p class="zikr">{{ currentZikr }}</p>
         </div>
     </div>
 
@@ -207,124 +207,274 @@ function startNextPrayerUpdate(prayerTimes) {
 }
 
 watch(prayerTimes, (newPrayerTimes) => {
-    if (newPrayerTimes) {
-        nextPrayer.value = getNextPrayer(newPrayerTimes);
-        startNextPrayerUpdate(newPrayerTimes);
+  if (newPrayerTimes) {
+    nextPrayer.value = getNextPrayer(newPrayerTimes);
+    startNextPrayerUpdate(newPrayerTimes);
+    
+    // تمرير تلقائي للصلاة الحالية على الشاشات الصغيرة
+    if (window.innerWidth < 768) {
+      setTimeout(() => {
+        const activePrayer = document.querySelector('.next-prayer');
+        if (activePrayer) {
+          activePrayer.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+          });
+        }
+      }, 300);
     }
+  }
 });
 </script>
 
 <style scoped>
 
-.footer{
-    padding-bottom: 100px; 
-    text-align: center;
-}
-.all{
-    margin-bottom: 20px;
-}
-* {
-    font-family: "Cairo", serif;
-    font-weight: 400;
-    font-style: normal;
-}
+
 
 .bgdiv {
     display: flex;
-    height: 70px;
+    min-height: 90px;
     justify-content: center;
     align-items: center;
     border-radius: 15px;
+    margin: 25px 0;
+    background: linear-gradient(to right, #e8c58f, #f0d087);
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(208, 168, 113, 0.2);
+    position: relative;
+    overflow: hidden;
+    font-size: 1.5em;
+}
+
+.bgdiv::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff50"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>');
+    background-size: contain;
+    opacity: 0.3;
+}
+
+.bgdiv p {
+    font-weight: 500;
+    font-size: 1.3em;
+    color: #3a3228;
+    text-align: center;
+    line-height: 1.6;
     margin: 0;
-    background: linear-gradient(to right, #ebc58f, #F5CD87);
-    p {
-        font-weight: 500;
-        font-size: 1.25em;
-        color: #222222;
-    }
 }
 
 .prayer-times-wrapper {
-    max-width: 90%;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 16px;
-    font-family: 'Cairo', sans-serif;
+    padding: 20px 16px 100px;
     direction: rtl;
+    min-height: 100vh;
 }
 
+* {
+    font-family: "the-year-of-the-camel", serif;
+    font-weight: 500;
+    line-height: 1.6;
+}
 .location-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    background: linear-gradient(135deg, #f5e8d0, #f0e0c0);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(208, 168, 113, 0.15);
 }
 
 .date-info {
     text-align: left;
-    font-size: 14px;
-    color: #555;
+    font-size: 15px;
+    color: #5a4a3a;
+}
+
+.date-info p:first-child {
+    margin-bottom: 5px;
+    font-weight: 600;
 }
 
 .location-info {
-    text-align: right;
+    text-align: center;
 }
 
 .location-title {
     color: #D0A871;
-    font-size: 14px;
-    margin-bottom: 4px;
-    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 5px;
+    font-weight: 700 !important;
+    position: relative;
+    display: inline-block;
+}
+
+.location-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    right: 0;
+    width: 100%;
+    height: 2px;
+    background: #D0A871;
+    border-radius: 2px;
 }
 
 .location-name {
     font-weight: bold;
-    font-size: 16px;
-    color: #333;
+    font-size: 17px;
+    color: #3a3228;
 }
 
 .prayer-times-container {
-    display: flex;
-    justify-content: flex-start;
-    gap: 12px;
-    padding: 16px;
-    overflow-x: auto;
-    white-space: nowrap;
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 16px;
+  scrollbar-width: none; /* لإخفاء شريط التمرير في Firefox */
+  -ms-overflow-style: none; /* لإخفاء شريط التمرير في IE و Edge */
+  white-space: nowrap;
+}
+/* لإخفاء شريط التمرير في Chrome و Safari و Opera */
+.prayer-times-container::-webkit-scrollbar {
+  display: none;
 }
 
+
 .prayer-time {
-    text-align: center;
-    padding: 8px;
-    background: #ffffff;
-    border-radius: 8px;
-    min-width: 80px;
-    flex: 0 0 auto;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+  flex: 0 0 auto;
+  min-width: 100px;
+  text-align: center;
+  padding: 15px 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+  display: inline-block; /* مهم للتمرير الأفقي */
+}
+
+@media (min-width: 768px) {
+  .prayer-times-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    overflow-x: visible;
+    white-space: normal;
+  }
+  
+  .prayer-time {
+    display: block;
+  }
+}
+
+.prayer-time:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .prayer-name {
     font-weight: bold;
-    font-size: 14px;
-    color: #232323;
-    margin-bottom: 8px;
+    font-size: 16px;
+    color: #5a4a3a;
+    margin-bottom: 10px;
+    position: relative;
+    padding-bottom: 5px;
+}
+
+.prayer-name::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 2px;
+    background: #D0A871;
+    border-radius: 2px;
 }
 
 .prayer-time-value {
-    font-size: 16px;
-    color: #000;
+    font-size: 18px;
+    color: #3a3228;
+    font-weight: 600;
 }
 
 .next-prayer {
-    background-color: #f5cd87;
-    color: #000;
-    transform: scale(1.05);
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(245, 205, 135, 0.5);
+  position: relative;
+  z-index: 1;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(245, 205, 135, 0.4);
+  background-color: #f0d087;
 }
 
+.next-prayer .prayer-name,
+.next-prayer .prayer-time-value {
+    color: #3a3228;
+}
+/* للهواتف الصغيرة (أقل من 768px) */
+@media (max-width: 767px) {
+  .prayer-times-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* لتمرير سلس على الأجهزة المحمولة */
+    padding-bottom: 10px; /* مساحة للظل */
+    margin: 0 -16px;
+    padding-left: 16px;
+  }
+  
+  .prayer-time {
+    min-width: 110px;
+    margin-right: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* إضافة مسافة على الجانب الأيمن لآخر عنصر */
+  .prayer-times-container::after {
+    content: '';
+    min-width: 16px;
+    height: 1px;
+  }
+}
+.prayer-times-container {
+  scroll-snap-type: x mandatory;
+}
+
+.prayer-time {
+  scroll-snap-align: start;
+}
+/* للشاشات الكبيرة (768px فأكثر) */
+@media (min-width: 768px) {
+  .prayer-times-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    overflow-x: visible;
+    padding: 10px;
+    margin: 0;
+  }
+  
+  .prayer-time {
+    width: auto;
+    min-width: auto;
+  }
+}
 .error-message {
-    color: red;
+    color: #d32f2f;
     text-align: center;
-    margin-top: 16px;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #ffebee;
+    border-radius: 8px;
+    border-left: 4px solid #d32f2f;
+    font-size: 15px;
 }
 
 .imagesection {
@@ -353,5 +503,57 @@ watch(prayerTimes, (newPrayerTimes) => {
     color: white;
     text-align: center;
     padding-top: 20%;
+}
+@media (max-width: 576px) {
+    .location-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .date-info {
+        text-align: center;
+    }
+    
+    .location-info {
+        text-align: center;
+    }
+    
+    .prayer-times-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .bgdiv p {
+        font-size: 1.1em;
+    }
+}
+
+@media (min-width: 768px) {
+    .prayer-times-container {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+.footer {
+    padding: 30px 0 30px;
+    text-align: center;
+    color: #5a4a3a;
+    font-size: 14px;
+
+    position: relative;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: #D0A871;
+    border-radius: 2px;
+}
+.zikr{
+    font-weight:900 !important;
 }
 </style>
