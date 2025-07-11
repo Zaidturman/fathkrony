@@ -17,6 +17,13 @@
                 <div>المسبحة</div>
             </div>
         </router-link>
+        <router-link to="/radio" class="nav-item" active-class="active">
+            <div>
+                <img src="../assets/images/radio.png" alt="" class="icon default-icon">
+                <img src="../assets/images/radio-2.png" alt="" class="icon active-icon">
+                <div>الاذاعة</div>
+            </div>
+        </router-link>
         <router-link to="/counter" class="nav-item" active-class="active">
             <div>
                 <img src="../assets/images/counter.png" alt="" class="icon default-icon">

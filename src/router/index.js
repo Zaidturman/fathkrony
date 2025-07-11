@@ -12,6 +12,7 @@ import Books from "@/components/Books.vue";
 import Hadeth from "@/components/Hadeth.vue";
 import Counter from "@/components/counter.vue";
 import Mosqueclockwrapper from "@/components/mosqueclockwrapper.vue";
+import Radio from "@/components/radio.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -44,6 +45,7 @@ const router = createRouter({
     { path: "/books", component: Books },
     { path: "/hadeth", component: Hadeth },
     { path: "/mosqu-clock", component: Mosqueclockwrapper },
+    { path: "/radio", component: Radio },
 
     {
       path: "/:pathMatch(.*)*",

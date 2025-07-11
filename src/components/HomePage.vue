@@ -53,7 +53,7 @@ const currentZikr = ref("");
 
 const getRandomZikr = () => {
     const randomIndex = Math.floor(Math.random() * azkar.length);
-    currentZikr.value = azkar[randomIndex];
+    currentZikr.value = azkar[randomIndex].text;
 };
 
 onMounted(() => {
@@ -363,10 +363,9 @@ watch(prayerTimes, (newPrayerTimes) => {
 
 @media (min-width: 768px) {
   .prayer-times-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    overflow-x: visible;
-    white-space: normal;
+    display: flex;
+
+ 
   }
   
   .prayer-time {

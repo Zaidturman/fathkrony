@@ -1,50 +1,65 @@
 <template>
-  <div class="mosque-clock-container">
-    <div v-if="isLoading" class="loading-screen">
-      <div class="spinner"></div>
-      <p class="loading-text">جاري تحميل البيانات...</p>
+  <div class="app-container">
+    <div class="zoom-controls">
+      <button @click="zoomIn" title="تكبير">
+        <span class="icon">+</span>
+      </button>
+      <button @click="zoomReset" title="إعادة الضبط">
+        <span class="icon">↻</span>
+      </button>
+      <button @click="zoomOut" title="تصغير">
+        <span class="icon">-</span>
+      </button>
     </div>
 
-    <div v-else class="main-content">
-      <!-- القسم العلوي - الوقت والتاريخ -->
-      <div class="header-section">
-        <div class="time-display">
-          <h1>{{ currentTime }}</h1>
-        </div>
-        
-        <div class="date-display">
-          <div class="hijri-date">{{ currentHijriDate }}</div>
-          <div class="gregorian-date">{{ currentDate }}</div>
-          <div class="day-name">{{ currentDay }}</div>
-        </div>
+    <div class="mosque-clock-container" :style="containerStyle">
+      <!-- باقي المحتوى كما هو -->
+      <div v-if="isLoading" class="loading-screen">
+        <div class="spinner"></div>
+        <p class="loading-text">جاري تحميل البيانات...</p>
       </div>
 
-      <!-- أوقات الصلاة -->
-      <div class="prayer-times-section">
-        <div 
-          v-for="(time, name) in filteredPrayerTimes" 
-          :key="name"
-          :class="['prayer-card', { 'next-prayer': isNextPrayer(name) }]"
-        >
-          <div class="prayer-name">{{ getPrayerName(name) }}</div>
-          <div class="prayer-time">{{ time }}</div>
-          <div class="time-remaining">
-            <span v-if="!isPrayerPassed(time)">{{ getRemainingTimeForPrayer(time) }}</span>
-            <span v-else class="passed">تمت الصلاة</span>
+      <div v-else class="main-content">
+        <!-- القسم العلوي - الوقت والتاريخ -->
+        <div class="header-section">
+          <div class="time-display">
+            <h1>{{ currentTime }}</h1>
+          </div>
+          
+          <div class="date-display">
+            <div class="hijri-date">{{ currentHijriDate }}</div>
+            <div class="gregorian-date">{{ currentDate }}</div>
+            <div class="day-name">{{ currentDay }}</div>
           </div>
         </div>
-      </div>
 
-      <!-- معلومات إضافية -->
-      <div class="info-section">
-        <div class="info-card iqama-time">
-          <div class="info-title">الوقت المتبقي للإقامة</div>
-          <div class="info-value">{{ remainingTimeForIqama }}</div>
+        <!-- أوقات الصلاة -->
+        <div class="prayer-times-section">
+          <div 
+            v-for="(time, name) in filteredPrayerTimes" 
+            :key="name"
+            :class="['prayer-card', { 'next-prayer': isNextPrayer(name) }]"
+          >
+            <div class="prayer-name">{{ getPrayerName(name) }}</div>
+            <div class="prayer-time">{{ time }}</div>
+            <div class="time-remaining">
+              <span v-if="!isPrayerPassed(time)">{{ getRemainingTimeForPrayer(time) }}</span>
+              <span v-else class="passed">تمت الصلاة</span>
+            </div>
+          </div>
         </div>
-        
-        <div class="info-card next-prayer-time">
-          <div class="info-title">الصلاة القادمة</div>
-          <div class="info-value">{{ getPrayerName(nextPrayer) }} - {{ remainingTimeForNextPrayer }}</div>
+
+        <!-- معلومات إضافية -->
+        <div class="info-section">
+          <div class="info-card iqama-time">
+            <div class="info-title">الوقت المتبقي للإقامة</div>
+            <div class="info-value">{{ remainingTimeForIqama }}</div>
+          </div>
+          
+          <div class="info-card next-prayer-time">
+            <div class="info-title">الصلاة القادمة</div>
+            <div class="info-value">{{ getPrayerName(nextPrayer) }} - {{ remainingTimeForNextPrayer }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -63,6 +78,46 @@ const remainingTimeForNextPrayer = ref('');
 const currentDate = ref('');
 const currentHijriDate = ref('');
 const currentDay = ref('');
+const zoomLevel = ref(1);
+const minZoom = 0.8;
+const maxZoom = 1.5;
+const zoomStep = 0.1;
+
+const containerStyle = computed(() => ({
+  transform: `scale(${zoomLevel.value})`,
+  transformOrigin: 'top center',
+  width: '100%',
+  height: '100%',
+  position: 'relative',
+  transition: 'transform 0.3s ease'
+}));
+
+const zoomIn = () => {
+  if (zoomLevel.value < maxZoom) {
+    zoomLevel.value = parseFloat((zoomLevel.value + zoomStep).toFixed(1));
+    localStorage.setItem('zoomLevel', zoomLevel.value);
+  }
+};
+
+const zoomOut = () => {
+  if (zoomLevel.value > minZoom) {
+    zoomLevel.value = parseFloat((zoomLevel.value - zoomStep).toFixed(1));
+    localStorage.setItem('zoomLevel', zoomLevel.value);
+  }
+};
+
+const zoomReset = () => {
+  zoomLevel.value = 1;
+  localStorage.setItem('zoomLevel', zoomLevel.value);
+};
+
+// استعادة إعدادات التكبير عند التحميل
+onMounted(() => {
+  const savedZoom = localStorage.getItem('zoomLevel');
+  if (savedZoom) {
+    zoomLevel.value = parseFloat(savedZoom);
+  }
+});
 
 const prayerIqamaTimes = {
   Fajr: 20,
@@ -438,6 +493,53 @@ function isNextPrayer(prayerKey) {
   }
   .mosque-clock-container{
     margin-bottom: 100px;
+  }
+}
+.zoom-controls {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.zoom-controls button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #8e6c88;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.zoom-controls button:hover {
+  background: #6d4c67;
+  transform: scale(1.1);
+}
+@media (max-width: 768px) {
+  .zoom-controls {
+    flex-direction: row;
+    left: 50%;
+    top: auto;
+    bottom: 20px;
+    transform: translateX(-50%);
+  }
+  
+  .mosque-clock-container {
+    padding-bottom: 80px;
   }
 }
 </style>
