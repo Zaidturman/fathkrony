@@ -57,15 +57,10 @@ const selectedBook = ref(null);
 
 const openBook = (url) => {
     selectedBook.value = url;
-    // إخفاء scrollbar عند فتح الكتاب
-    document.body.style.overflow = 'hidden';
+  
 };
 
-const closeModal = () => {
-    selectedBook.value = null;
-    // إعادة scrollbar عند الإغلاق
-    document.body.style.overflow = 'auto';
-};
+
 
 onMounted(() => {
     booksStore.loadBooks();
