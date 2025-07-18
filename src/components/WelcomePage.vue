@@ -24,11 +24,11 @@
                 <div>الاذاعة</div>
             </div>
         </router-link>
-        <router-link to="/counter" class="nav-item" active-class="active">
+        <router-link to="/quiz" class="nav-item" active-class="active">
             <div>
-                <img src="../assets/images/counter.png" alt="" class="icon default-icon">
-                <img src="../assets/images/counter-2.png" alt="" class="icon active-icon">
-                <div>عداد</div>
+                <img src="../assets/images/ideas.png" alt="" class="icon default-icon">
+                <img src="../assets/images/ideas1.png" alt="" class="icon active-icon">
+                <div>اسئلة الاختبار</div>
             </div>
         </router-link>
         <router-link to="/mosqu-clock" class="nav-item" active-class="active">
